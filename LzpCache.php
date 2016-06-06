@@ -1,6 +1,6 @@
 <?php
 /**
- * LzpCache v1.0 - Requer PHP > 5.4
+ * LzpCache v1.1.0 - Requer PHP >= 5.4
  *
  * @author Lozep Tecnologia <admin@lozep.com.br>
  * @copyright 2016 Lozep Tecnologia
@@ -19,7 +19,9 @@
 *
 *
 * Recursos ainda não implementados:
-* - Configuração personalizada para criar o cache($cache->Set(string $name, mixed $data, array $config)
+* - Argumento opcional($cacheVersion) adicionado nas Configurações(version)
+* - Argumento opcional($cacheVersion) adicionado nas Funções(GetMultiples, CreateMultiples, DeleteMultiples, ExistsMultiples)
+* - Configuração personalizada para criar o cache($cache->Create($name, $data, $version, $config)
 *
 *
 * Recursos que talvez sejam introduzidos:
@@ -27,83 +29,104 @@
 *
 *
 * Como Usar:
-* -Para Configurar:
-* 	$config = array('dir' => __DIR__.'/cache/', 'expire' => 600, 'compress' => 0, 'cacheNameType' => array('hash' => 'md5', 'prefix' => '%name%_'), 'ext' => '.cache'); //Valores padrões
-* 	$cache = new Lozep\LzpCache([array $config]);
-* 	$cache->Config([array $config]);
+* -Configurar:
+* 	$config = array('dir', 'expire', 'compress', 'cacheNameType', 'ext')
+* 	Parametros( = Padrão):
+* 		$config['dir'] = (string)__DIR__.'/cache/'
+* 		$config['expire'] = (int)600
+* 		$config['compress'] = (int)0
+* 		$config['cacheNameType'] = array('hash' => 'md5', 'prefix' => '%name%_') - Use %name% para colocar o nome do cache no prefixo
+* 		$config['ext'] = (string)'.cache'
 *
-* -Para verificar se um cache existe:
-* 	$cacheExists = $cache->Exists(string $cacheName); // Retorna false se o cache não existir
+* 	Aplicar Configuração:
+* 		$cache = new Lozep\LzpCache($config);
+* 		ou
+* 		$cache = new Lozep\LzpCache;
+* 		$cache->Config($config);
 *
-* -Para verificar se vários caches existem:
-* 	$cachesExists = $cache->ExistsMultiples(array $cachesNames); // Retorna um array($nomecache=>$exists) caso esse cache não exista $exists recebe false
 *
-* -Para obter um Cache:
-* 	$cacheGet = $cache->Get(string $cacheName, bool $getExpired=false); // Retorna null se o cache não existir
+* -Verificação da existência ou não do(s) cache(s):
+*	Verificação única(Retorna true se o cache existir)
+* 		$cache = new Lozep\LzpCache;
+* 		$cache->Exists($cacheName, $cacheVersion);
+* 		Parametros( = Padrão):
+* 			$cacheName - Nome do cache(Parametro obrigatório)
+* 			$cacheVersion = false - Versão do cache a ser verificado - Valores Aceitos(float, string, int) - (opcional)
 *
-* -Para obter vários caches de uma vez:
-* 	$cacheMultiples = $cache->GetMultiples(array $cachesNames, bool $getExpired=false); // Retorna um array($nomecache=>$valor) caso esse cache não exista retorna null
-* 
-* -Para criar um Cache:
-* 	$cache->Create(string $cacheName, mixed $data);//Retorna true em sucesso
-* 
-* -Para criar vários caches:
-* 	$namesAndValues = array('cacheName1' => $value, 'cacheName2' => $value);
-* 	$cache->CreateMultiples(array $namesAndValues);//Retorna true em sucesso
-* 
-* -Para deletar um cache:
-* 	$cache->Delete('cacheName');//Retorna true em sucesso 
-* 
-* -Para deletar vários caches:
-* 	$cache->DeleteMultiples(array $names);//Retorna true em sucesso
-* 
-* -Para deletar todos os caches:
-* 	$cache->DeleteAll();//Retorna true em sucesso
+* 	Verificação multipla(Retorna um array($nomecache=>$exists)):
+* 		$cache = new Lozep\LzpCache;
+* 		$cache->ExistsMultiples(array('nome_do_cache00', 'nome_do_cache01'));
 *
-* 
+*
+* -Obtenção do(s) cache(s):
+* 	Obter um único cache(Retorna null caso o cache não exista):
+* 		$cache = new Lozep\LzpCache;
+* 		$cache->Get($cacheName, $getExpired, $cacheVersion);
+* 		Parametros( = Padrão):
+* 			$cacheName - Nome do cache(Parametro obrigatório)
+* 			$getExpired = false - Ignora se o cache já expirou(opcional)
+* 			$cacheVersion = false - Versão do cache a ser obtido - Valores Aceitos(float, string, int) - (opcional)
+*
+* 	Obter Múltiplos caches(Retorna um array($nomecache=>$value)):
+* 		$cache = new Lozep\LzpCache;
+* 		$cache->GetMultiples($cachesNames, $getExpired);
+* 		Parametros( = Padrão):
+* 			$cachesNames - Array contendo os Nomes dos caches(Parametro obrigatório)
+* 			$getExpired = false - Ignora se o cache já expirou(opcional)
+*
+*
+* -Criação do(s) cache(s):
+* 	Criar um único cache(Retorna true se o cache for criado)
+* 		$cache = new Lozep\LzpCache;
+* 		$cache->Create($cacheName, $data, $cacheVersion);
+* 		Parametros( = Padrão):
+* 			$cacheName - Nome do cache(Parametro obrigatório)
+* 			$data - Valor do cache, tudo é aceito(Parametro obrigatório)
+* 			$cacheVersion = false - Versão do cache a ser criado - Valores Aceitos(float, string, int) - (opcional)
+*
+* 	Criar Múltiplos caches(Retorna true se os caches forem criados)
+* 		$cache = new Lozep\LzpCache;
+* 		$cache->CreateMultiples($namesAndValues);
+* 		Parametros:
+* 		$namesAndValues = Array('nomeCache' => 'esse é o valor') - Array contendo os Nomes e os valores dos caches a serem criados(Parametro obrigatório)
+*
+*
+* -Exclusão do(s) cache(s):
+* 	Deletar um único cache(Retorna true se o cache for excluido)
+* 		$cache = new Lozep\LzpCache;
+* 		$cache->Delete($cacheName, $cacheVersion);
+* 		Parametros( = Padrão):
+* 			$cacheName - Nome do cache(Parametro obrigatório)
+* 			$cacheVersion = false - Versão do cache a ser deletado - Valores Aceitos(float, string, int) - (opcional)
+*
+* 	Deletar Múltiplos caches(Retorna true se os caches forem excluidos)
+* 		$cache = new Lozep\LzpCache;
+* 		$cache->DeleteMultiples($cachesNames);
+* 		Parametros:
+* 		$cachesNames - Array contendo os Nomes dos caches(Parametro obrigatório)
+*
+* 	Para deletar todos os caches(Retorna true se os caches forem excluídos)
+* 		$cache = new Lozep\LzpCache;
+* 		$cache->DeleteAll();
+*
+*
 *** ChangeLog *** 
+#########################################################
+# V 1.1													#
+# -Novo argumento opcional($cacheVersion)				#
+# -Melhor documentação									#
+# -Performance Otimizada								#
+# -Nova função(cacheDirSize)							#
 #########################################################
 # V 1.0													#
 # -Lançamento do código para uso livre(MIT License)		#
-# -Removido(cfgCacheFile)								#
-# -Performance Otimizada								#
-# -Nova Opção(cacheNameType)							#
-# -Funções renomeadas:									#
-# getMultiple => GetMultiples							#
-# setMultiple => CreateMultiples						#
-# delMultiple => DeleteMultiples						#
-# existMultiple => ExistsMultiples						# 
-# set => Create											#
-# del => Delete											#
-# exist => Exists										#
-#########################################################
-# V 0.6													#
-# -Nova Opção(compress)									#
-# -Novas funções(exist, existMultiple)					#
-#########################################################
-# V 0.5													#
-# -Novas funções(delAll, delMultiple)					#
-# -Nova opção(ext) 										#
-#########################################################
-# V 0.4													#
-# -Pegar cache mesmo que tenha expirado					#
-#########################################################
-# V 0.3													#
-# -Novas funções(setMultiple, getMultiple)				#
-#########################################################
-# V 0.2													#
-# -Nova opção(cfgCacheFile)								#
-#########################################################
-# V 0.1													#
-# -Primeira versão										#
-# -Funções básicas(get, set, del)						#
 #########################################################
 */
 class LzpCache{
 	#######
 	# CFG #
 	#######
-	protected $cfg = array('dir' => __DIR__.'/cache/', 'expire' => 600, 'compress' => 0, 'cacheNameType' => array('hash' => 'md5', 'prefix' => '%name%_'), 'ext' => '.cache');
+	protected $cfg = array('dir' => __DIR__.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR, 'expire' => 600, 'compress' => 0, 'cacheNameType' => array('hash' => 'md5', 'prefix' => '%name%_'), 'ext' => '.cache');
 
 	#############
 	# CONSTRUCT #
@@ -112,13 +135,15 @@ class LzpCache{
 		if(is_array($config)){
 			$this->cfg = array_replace($this->cfg, $config);
 		}
+		if(!is_dir($this->cfg['dir'])){mkdir($this->cfg['dir'], 0755, true);}
 	}
 
 	#################################################
 	# CONFIG/NAME/ENCODE/DECODE/COMPRESS/UNCOMPRESS #
 	#################################################
 	public  function Config($config){$this->cfg = array_replace($this->cfg, $config);}
-	private function Name($name){$name = preg_replace("/[^a-zA-Z0-9_.-]/", "", $name);$name = is_array($this->cfg['cacheNameType'])?str_ireplace('%name%', $name, $this->cfg['cacheNameType']['prefix']).hash($this->cfg['cacheNameType']['hash'], $name):false;return $name;}
+	private function Filter($name){return preg_replace("/[^a-z0-9_.-]/", "", $name);}
+	private function Name($name){$name = strtolower($name);$name = $this->Filter($name);$name = is_array($this->cfg['cacheNameType'])?str_ireplace('%name%', $name, $this->cfg['cacheNameType']['prefix']).hash($this->cfg['cacheNameType']['hash'], $name):false;return $name;}
     private function Encode($data){return (is_array($data) || is_object($data))?serialize($data):$data;}
     private function Decode($data){$x = @unserialize($data);return ($x === 'b:0;' || $x !== false)?$x:$data;}
 	private function Compress($data){return (function_exists('gzdeflate') && function_exists('gzinflate'))?gzdeflate($data, $this->cfg['compress']):$data;}
@@ -127,8 +152,10 @@ class LzpCache{
 	##########
 	# EXISTS #
 	##########
-	public function Exists($name){
-		return is_readable($this->cfg['dir'].$this->Name($name).$this->cfg['ext']);
+	public function Exists($name, $version=false){
+		$version = ($version != false && $version != '' && (is_string($version) || is_float($version) || is_int($version)))?$this->Filter($version).DIRECTORY_SEPARATOR:'';
+		$file = $this->cfg['dir'].$version.$this->Name($name).$this->cfg['ext'];
+		return (is_file($file) && is_readable($file));
 	}
 
 	####################
@@ -136,18 +163,36 @@ class LzpCache{
 	####################
 	public function ExistsMultiples($names){
 		foreach($names as $name){
-			$exists[$name] = is_readable($this->cfg['dir'].$this->Name($name).$this->cfg['ext']);
+			$file = $this->cfg['dir'].$this->Name($name).$this->cfg['ext'];
+			$exists[$name] = (is_file($file) && is_readable($file));
 		}
 		return $exists;
+	}
+
+	##################
+	# CACHE DIR SIZE #
+	##################
+	function cacheDirSize(){
+		$dir = $this->cfg['dir'];
+		if(!is_readable($dir))die('Direrório não diponível ou sem permissão para leitura');
+		$size = 0;
+		$extSize = [' Bytes', ' KB', ' MB', ' GB', ' TB', ' PB', ' EB', ' ZB', ' YB'];
+		$files = glob(rtrim($dir, '/').'/*', GLOB_NOSORT);
+		foreach($files as $file){
+			$size += is_file($file) ? filesize($file) : folderSize($file);
+		}
+
+		return ($size ? round($size/pow(1024, ($i = floor(log($size, 1024)))), 2) . $extSize[$i] : 'Vazio');
 	}
 
 	##########
 	# CREATE #
 	##########
-	public function Create($name, $data){
+	public function Create($name, $data, $version=false){
 		if(!is_writeable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para escrita');
 		$name = $this->Name($name);
 		$data = $this->Encode($data);
+		$path = $this->cfg['dir'].(($version != false && $version != '' && (is_string($version) || is_float($version) || is_int($version)))?$this->Filter($version).DIRECTORY_SEPARATOR:'');
 
 		$cacheData = array(
 			'compress' => $this->cfg['compress'],
@@ -157,7 +202,8 @@ class LzpCache{
 
 		$cacheData = $this->Encode($cacheData);
 
-		$put = file_put_contents($this->cfg['dir'].$name.$this->cfg['ext'], $cacheData);
+		if(!is_dir($path)){mkdir($path, 0777, true);}
+		$put = file_put_contents($path.$name.$this->cfg['ext'], $cacheData);
 
 		return ($put!==false);
 	}
@@ -189,9 +235,11 @@ class LzpCache{
 	#######
 	# GET #
 	#######
-	public function Get($name, $expired=false){
+	public function Get($name, $expired=false, $version=false){
+		if(!is_readable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para leitura');
 		$name = $this->Name($name);
-		$file = $this->cfg['dir'].$name.$this->cfg['ext'];
+		$version = ($version != false && $version != '' && (is_string($version) || is_float($version) || is_int($version)))?$this->Filter($version).DIRECTORY_SEPARATOR:'';
+		$file = $this->cfg['dir'].$version.$name.$this->cfg['ext'];
 
 		if(is_readable($file)){
 			$cacheData = $this->Decode(file_get_contents($file));
@@ -208,8 +256,9 @@ class LzpCache{
 	# GET MULTIPLES #
 	#################
 	public function GetMultiples($names, $expired=false){
+		if(!is_readable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para leitura');
 		foreach($names as $name){
-			$data[$name] = $this->get($name, $expired);
+			$data[$name] = $this->Get($name, $expired);
 		}
 		return $data;
 	}
@@ -217,9 +266,11 @@ class LzpCache{
 	##########
 	# DELETE #
 	##########
-	public function Delete($name){
+	public function Delete($name, $version=false){
+		if(!is_writeable($this->cfg['dir']) && !is_readable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para escrita/leitura');
+		$version = ($version != false && $version != '' && (is_string($version) || is_float($version) || is_int($version)))?$this->Filter($version).DIRECTORY_SEPARATOR:'';
 		$name = $this->Name($name);
-		$file = $this->cfg['dir'].$name.$this->cfg['ext'];
+		$file = $this->cfg['dir'].$version.$name.$this->cfg['ext'];
 
 		if(is_file($file)){return @unlink($file);}
 		return false;
@@ -229,11 +280,10 @@ class LzpCache{
 	# DELETE MULTIPLES #
 	####################
 	public function DeleteMultiples($names){
+		if(!is_writeable($this->cfg['dir']) && !is_readable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para escrita/leitura');
 		$del = array();
 		foreach($names as $name){
-			$name = $this->Name($name);
-			$file = $this->cfg['dir'].$name.$this->cfg['ext'];
-			if(is_file($file)){$del[] = @unlink($file);}
+			$del[] = $this->Delete($name);
 		}
 		return !in_array(false, $del);
 	}
@@ -242,8 +292,9 @@ class LzpCache{
 	# DELETE ALL #
 	##############
 	public function DeleteAll(){
+		if(!is_writeable($this->cfg['dir']) && !is_readable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para escrita/leitura');
 		$del = array();
-		$files = glob($this->cfg['dir']);
+		$files = glob($this->cfg['dir'].'/*', GLOB_NOSORT);
 		foreach($files as $file){
 		  if(is_file($file)){$del[] = @unlink($file);}
 		}
