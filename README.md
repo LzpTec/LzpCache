@@ -2,7 +2,8 @@
 **LzpCache** é uma classe para cache.
 
 ## Versão Atual
-1.1.0 - 06/06/2016
+1.2.0 - 08/06/2016
+
 
 ## Recursos
 - Compressão do cache
@@ -26,16 +27,16 @@
 Inicializar:
 ```php
 	//Sem configurações
-	$cache = new Lozep\LzpCache;
+	$cache = new Lzp\Cache;
 
 	//Com configurações
-	$cache = new Lozep\LzpCache($config);
+	$cache = new Lzp\Cache($config);
 ```
 
 Para Configurar:
 ```php
 	//Configurações
-		$config = array('dir', 'expire', 'compress', 'cacheNameType', 'ext')
+		$config = array('dir', 'expire', 'compress', 'cacheNameType', 'ext');
 	//Parametros( = Padrão):
 		$config['dir'] = __DIR__.'/cache/'; // Caminho do Diretório
 		$config['expire'] = (int)600;
