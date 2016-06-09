@@ -1,6 +1,6 @@
 <?php
 /**
- * LzpCache v1.2.0 - Requer PHP >= 5.5
+ * LzpCache v1.2.1 - Requer PHP >= 5.5
  *
  * @author André Posso <andre.posso@lzp.com>
  * @copyright 2016 Lzp Tec
@@ -19,7 +19,6 @@
 *
 *
 * Recursos ainda não implementados:
-* - Argumento opcional($cacheVersion) adicionado nas Configurações(version)
 * - Argumento opcional($cacheVersion) adicionado nas Funções(GetMultiples, CreateMultiples, DeleteMultiples, ExistsMultiples)
 * - Configuração personalizada para criar o cache($cache->Create($name, $data, $version, $config)
 *
@@ -30,13 +29,14 @@
 *
 * Como Usar:
 * -Configurar:
-* 	$config = array('dir', 'expire', 'compress', 'cacheNameType', 'ext');
+* 	$config = array('dir', 'expire', 'version', 'compress', 'cacheNameType', 'ext');
 * 	Parametros( = Padrão):
-* 		$config['dir'] = (string)__DIR__.'/cache/'
-* 		$config['expire'] = (int)600
-* 		$config['compress'] = (int)0
-* 		$config['cacheNameType'] = array('hash' => 'md5', 'prefix' => '%name%_') - Use %name% para colocar o nome do cache no prefixo
-* 		$config['ext'] = (string)'.cache'
+* 		$config['dir'] = (string)__DIR__.'/cache/' - Valores Aceitos(string) - (opcional)
+* 		$config['expire'] = (int)600 - 0 para infinito - Valores Aceitos(int) - (opcional)
+*		$config['version'] = false - Versão do cache a ser verificado - Valores Aceitos(float, string, int) - (opcional)
+* 		$config['compress'] = (int)0 - Valores Aceitos(int) - (opcional)
+* 		$config['cacheNameType'] = array('hash' => 'md5', 'prefix' => '%name%_') - Use %name% para colocar o nome do cache no prefixo  - (opcional)
+* 		$config['ext'] = (string)'.cache'  - (opcional)
 *
 * 	Aplicar Configuração(Inicialização):
 * 		$cache = new Lzp\Cache($config);
@@ -118,6 +118,10 @@
 *
 *** ChangeLog ***
 #####################################################################
+# V 1.2.1															#
+# -Argumento opcional adicionado nas Configurações('version')		#
+# -Performance Otimizada											#
+#####################################################################
 # V 1.2.0															#
 # -Documentação atualizada											#
 # -Performance Otimizada											#
@@ -178,7 +182,7 @@ class Cache{
 	# EXISTS #
 	##########
 	public function Exists($name, $version=false){
-		$version = ValidateVersion($version)?$this->Filter($version).DIRECTORY_SEPARATOR:'';
+		$version = $this->ValidateVersion($version)?$this->Filter($version).DIRECTORY_SEPARATOR:($this->ValidateVersion($this->cfg['version'])?$this->Filter($this->cfg['version']).DIRECTORY_SEPARATOR:'');
 		$file = $this->cfg['dir'].$version.$this->Name($name).$this->cfg['ext'];
 		return (is_file($file) && is_readable($file));
 	}
@@ -201,7 +205,8 @@ class Cache{
 		if(!is_writeable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para escrita');
 		$name = $this->Name($name);
 		$data = $this->Encode($data);
-		$path = $this->cfg['dir'].(ValidateVersion($version)?$this->Filter($version).DIRECTORY_SEPARATOR:'');
+		$version = $this->ValidateVersion($version)?$this->Filter($version).DIRECTORY_SEPARATOR:($this->ValidateVersion($this->cfg['version'])?$this->Filter($this->cfg['version']).DIRECTORY_SEPARATOR:'');
+		$path = $this->cfg['dir'].$version;
 
 		$expire = isset($config['expire'])?$config['expire']:$this->cfg['expire'];
 		$expire = ($expire!=0)?(time() + (Int)$expire):0;
@@ -251,7 +256,7 @@ class Cache{
 	public function Get($name, $expired=false, $version=false){
 		if(!is_readable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para leitura');
 		$name = $this->Name($name);
-		$version = ValidateVersion($version)?$this->Filter($version).DIRECTORY_SEPARATOR:'';
+		$version = $this->ValidateVersion($version)?$this->Filter($version).DIRECTORY_SEPARATOR:($this->ValidateVersion($this->cfg['version'])?$this->Filter($this->cfg['version']).DIRECTORY_SEPARATOR:'');
 		$file = $this->cfg['dir'].$version.$name.$this->cfg['ext'];
 
 		if(is_readable($file)){
@@ -281,7 +286,7 @@ class Cache{
 	##########
 	public function Delete($name, $version=false){
 		if(!is_writeable($this->cfg['dir']) && !is_readable($this->cfg['dir']))return;
-		$version = ValidateVersion($version)?$this->Filter($version).DIRECTORY_SEPARATOR:'';
+		$version = $this->ValidateVersion($version)?$this->Filter($version).DIRECTORY_SEPARATOR:($this->ValidateVersion($this->cfg['version'])?$this->Filter($this->cfg['version']).DIRECTORY_SEPARATOR:'');
 		$name = $this->Name($name);
 		$file = $this->cfg['dir'].$version.$name.$this->cfg['ext'];
 
@@ -306,7 +311,7 @@ class Cache{
 	##############
 	public function DeleteAll($version=false){
 		if(!is_writeable($this->cfg['dir']) && !is_readable($this->cfg['dir']))return;
-		$version = ValidateVersion($version)?$this->Filter($version).DIRECTORY_SEPARATOR:'';
+		$version = $this->ValidateVersion($version)?$this->Filter($version).DIRECTORY_SEPARATOR:($this->ValidateVersion($this->cfg['version'])?$this->Filter($this->cfg['version']).DIRECTORY_SEPARATOR:'');
 		$del = array();
 		$files = glob($this->cfg['dir'].$version.'/*', GLOB_NOSORT);
 		foreach($files as $file){

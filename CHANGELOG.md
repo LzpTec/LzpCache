@@ -1,8 +1,13 @@
 # LzpCache Changelog
 
 ## Versão Atual
-1.2.0 - 08/06/2016
+1.2.1 - 09/06/2016
 
+
+## V 1.2.1
+-Argumento opcional adicionado nas Configurações('version')
+
+-Performance Otimizada
 
 ## V 1.2.0
 -Documentação atualizada

@@ -2,7 +2,7 @@
 **LzpCache** é uma classe para cache.
 
 ## Versão Atual
-1.2.0 - 08/06/2016
+1.2.1 - 09/06/2016
 
 
 ## Recursos
@@ -14,7 +14,6 @@
 
 
 ## Recursos ainda não implementados
-- Argumento opcional($cacheVersion) adicionado nas Configurações(version)
 - Argumento opcional($cacheVersion) adicionado nas Funções(GetMultiples, CreateMultiples, DeleteMultiples, ExistsMultiples)
 - Configuração personalizada para criar o cache($cache->Create($name, $data, $version, $config)
 
@@ -36,10 +35,11 @@ Inicializar:
 Para Configurar:
 ```php
 	//Configurações
-		$config = array('dir', 'expire', 'compress', 'cacheNameType', 'ext');
+		$config = array('dir', 'expire', 'version', 'compress', 'cacheNameType', 'ext');
 	//Parametros( = Padrão):
-		$config['dir'] = __DIR__.'/cache/'; // Caminho do Diretório
+		$config['dir'] = __DIR__.'/cache/'; //Caminho do Diretório
 		$config['expire'] = (int)600;
+		$config['version'] = false; //Versão do cache a ser verificado - Valores Aceitos(float, string, int) - (opcional)
 		$config['compress'] = (int)0;
 		$config['cacheNameType'] = array('hash' => 'md5', 'prefix' => '%name%_'); //Use %name% para colocar o nome do cache no prefixo
 		$config['ext'] = (string)'.cache';
