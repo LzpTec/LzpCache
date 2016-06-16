@@ -1,8 +1,30 @@
 # LzpCache Changelog
 
 ## Versão Atual
-1.2.1 - 09/06/2016
+1.3.0 - 16/06/2016
 
+## V 1.3.0
+-Performance Otimizada
+
+-Documentação atualizada
+
+-Criptografia do cache(Consome desempenho)
+
+-Modificado CacheDirSize -> DirSize
+
+-Bugs na função DirSize corrigidos
+
+-Novo parâmetro para ExistsMultiples($version)
+
+-Novo parâmetro para CreateMultiples($version)
+
+-Novo parâmetro para GetMultiples($version)
+
+-Novo parâmetro para DeleteMultiples($version)
+
+-Novo parâmetro para DirSize($version)
+
+-Extensão padrão modificada para(.lzp)
 
 ## V 1.2.1
 -Argumento opcional adicionado nas Configurações('version')
