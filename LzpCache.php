@@ -10,40 +10,43 @@
 /*
 *
 *
-* Resources:
-* - Cache Compression
-* - Custom name for the cache and custom hash
-* - Custom cache extension
-* - Create/Get/Delete multiples caches
-* - Ignore cache expires
+* Recursos:
+* - Compressão do cache
+* - Nome personalizado para o cache/Hash de escolha do usuário
+* - Extensão do arquivo cache personalizada
+* - Criar/Obter/Deletar vários caches de uma vez
+* - É possível obter um cache mesmo que ele tenha expirado
 *
 *
-* Resources that may be introduced:
-* - Support for MemCached and MemCached.
-* - Custom configuration to create the cache($cache->Create($name, $data, $version, $config))
+* Recursos ainda não implementados:
+* - Configuração personalizada para criar o cache($cache->Create($name, $data, $version, $config))
+*
+*
+* Recursos que talvez sejam introduzidos:
+* - Suporte para MemCache e MemCached.
 *
 *
 ****Como Usar****
 *
 * Inicializar:
-*	//Without settings
+*	//Sem configurações
 *		$cache = new Lzp\Cache;
-*	//With settings
+*	//Com configurações
 *		$cache = new Lzp\Cache($config);
 *
 *
 *
-* Configuration:
-*	//Configs
+* Configurar:
+*	//Configurações
 *		$config = array('dir', 'expire', 'version', 'compress', 'cacheNameType', 'ext');
-*	//Parameters( = Default):
-*		$config['dir'] = __DIR__.'/cache/'; 										//Directory where the cache is stored
-*		$config['expire'] = 600; 													//0 to infinity - Values Accepted: int(Optional)
-*		$config['version'] = null; 													//null to disable - Values Accepted: float, string and int(Optional)
-*		$config['compress'] = 0;													//0 disable - Accepted Values: int 0-9(Optional)
-*		$config['cacheNameType'] = array('hash' => 'md5', 'prefix' => '%name%_'); 	//Use %name% to put the name of the cache in the prefix(Optional)
-*		$config['ext'] = '.lzp'; 													//Cache file extension(Optional)
-*	//Apply Configuration:
+*	//Parametros( = Padrão):
+*		$config['dir'] = __DIR__.'/cache/'; 										//Caminho do Diretório onde o cache será armazenado
+*		$config['expire'] = 600; 													//0 para infinito - Valor Aceito int(opcional)
+*		$config['version'] = false; 												//false ou 0 desativam - Valores Aceitos float, string e int(opcional)
+*		$config['compress'] = 0;													//0 desativa - Valor Aceito int de 0 a 9(opcional)
+*		$config['cacheNameType'] = array('hash' => 'md5', 'prefix' => '%name%_'); 	//Use %name% para colocar o nome do cache no prefixo(opcional)
+*		$config['ext'] = '.lzp'; 													//Extensão do arquivo de cache(opcional)
+*	//Aplicar Configuração:
 *		$cache->Config($config);
 *
 *
@@ -51,32 +54,32 @@
 * Para obter um único cache:
 *	$cache->Get($cacheName, $getExpired, $cacheVersion);
 *	//Parametros( = Padrão):
-* 		$cacheName = 'cache_name'; 										//Cache name(Required)
-* 		$getExpired = false;											//Ignores cache expiration(Optional)
-* 		$cacheVersion = false;											//Cache version to be obtained - Values Accepted: float, string and int(Optional)
+* 		$cacheName = 'nome_do_cache'; 									//Nome do cache(Parametro obrigatório)
+* 		$getExpired = false;											//Ignora se o cache já expirou(opcional)
+* 		$cacheVersion = false;											//Versão do cache a ser obtido - Valores Aceitos float, string e int(opcional)
 *
 * Para obter múltiplos caches:
-* 	$cache->Get($cachesNames, $getExpired, $cacheVersion);				//Returns an array($cacheName => $value)
+* 	$cache->Get($cachesNames, $getExpired, $cacheVersion);				//Retorna um array($nomeDoCache=>$valor)
 * 	//Parametros( = Padrão):
-*		$cachesNames = array('nome_do_cache00', 'nome_do_cache01');		//Array containing the name of each cache(Required)
-*		$getExpired = false;											//Ignores cache expiration(Optional)
-* 		$cacheVersion = false;											//Cache version to be obtained - Values Accepted: float, string and int(Optional)
+*		$cachesNames = array('nome_do_cache00', 'nome_do_cache01');		//Array contendo o Nome de cada cache(Parametro obrigatório)
+*		$getExpired = false;											//Ignora se o cache já expirou(opcional)
+* 		$cacheVersion = false;											//Versão do cache a ser obtido - Valores Aceitos float, string e int(opcional)
 *
 *
 *
 * Para criar um cache:
-* 	$cache->Create($cacheName, $data, $cacheVersion, $config); 								//Returns true if successful
+* 	$cache->Create($cacheName, $data, $cacheVersion, $config); 								//Retorna true em caso de sucesso
 *	//Parametros( = Padrão):
-* 		$cacheName = 'nome_do_cache';														//Cache name(Required)
-* 		$data = 'dadosDoCache';																//Cache data(Required)
-* 		$cacheVersion = false;																//Cache version to be created - Values Accepted: float, string and int(Optional)
-*		$config = false;																	//Settings for the cache: array('expire', 'compress')
+* 		$cacheName = 'nome_do_cache';														//Nome do cache(Parametro obrigatório)
+* 		$data = 'dadosDoCache';																//Dados a serem guardados no cache, tudo é aceito(Parametro obrigatório)
+* 		$cacheVersion = false;																//Versão do cache a ser criado - Valores Aceitos(float, string, int) - (opcional)
+*		$config = false;																	//Configurações para o cache Aceito: array('expire', 'compress')
 *
 * Para criar múltiplos caches:
-*  	$cache->CreateMultiples($namesValues, $cacheVersion); 									//Returns an array($nomecache=>$isCreated)
+*  	$cache->CreateMultiples($namesValues, $cacheVersion); 									//Retorna um array($nomecache=>$foiCriado)
 *	//Parametros( = Padrão):
-*		$namesValues = array('nome_do_cache00' => $value, 'nome_do_cache01' => $value); 	//Array containing the name of each cache to be created(Required)
-*		$cacheVersion = false; 																//Cache version to be created - Values Accepted: float, string and int(Optional)
+*		$namesValues = array('nome_do_cache00' => $value, 'nome_do_cache01' => $value); 	//Array contendo os Nomes e os valores dos caches a serem criados(Parametro obrigatório)
+*		$cacheVersion = false; 																//Versão dos caches a serem criados - Valores Aceitos float, string e int(opcional)
 *
 *
 *
