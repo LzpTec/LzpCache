@@ -1,6 +1,6 @@
 <?php
 /**
- * LzpCache v1.3.0 - Requer PHP >= 5.5
+ * LzpCache v2.0.0 - Requer PHP >= 5.5
  *
  * @author André Posso <andre.posso@lzptec.com>
  * @copyright 2016 Lzp Tec
@@ -10,44 +10,40 @@
 /*
 *
 *
-* Recursos:
-* - Compressão do cache
-* - Nome personalizado para o cache/Hash de escolha do usuário
-* - Extensão do arquivo cache personalizada
-* - Criar/Obter/Deletar vários caches de uma vez
-* - É possível obter um cache mesmo que ele tenha expirado
+* Resources:
+* - Cache Compression
+* - Custom name for the cache and custom hash
+* - Custom cache extension
+* - Create/Get/Delete multiples caches
+* - Ignore cache expires
 *
 *
-* Recursos ainda não implementados:
-* - Configuração personalizada para criar o cache($cache->Create($name, $data, $version, $config))
-*
-*
-* Recursos que talvez sejam introduzidos:
-* - Suporte para MemCache e MemCached.
+* Resources that may be introduced:
+* - Support for MemCached and MemCached.
+* - Custom configuration to create the cache($cache->Create($name, $data, $version, $config))
 *
 *
 ****Como Usar****
 *
 * Inicializar:
-*	//Sem configurações
+*	//Without settings
 *		$cache = new Lzp\Cache;
-*	//Com configurações
+*	//With settings
 *		$cache = new Lzp\Cache($config);
 *
 *
 *
-* Configurar:
-*	//Configurações
+* Configuration:
+*	//Configs
 *		$config = array('dir', 'expire', 'version', 'compress', 'cacheNameType', 'ext');
-*	//Parametros( = Padrão):
-*		$config['dir'] = __DIR__.'/cache/'; 										//Caminho do Diretório onde o cache será armazenado
-*		$config['expire'] = 600; 													//0 para infinito - Valor Aceito int(opcional)
-*		$config['version'] = false; 												//false ou 0 desativam - Valores Aceitos float, string e int(opcional)
-*		$config['compress'] = 0;													//0 desativa - Valor Aceito int de 0 a 9(opcional)
-*		$config['cacheNameType'] = array('hash' => 'md5', 'prefix' => '%name%_'); 	//Use %name% para colocar o nome do cache no prefixo(opcional)
-*		$config['ext'] = '.lzp'; 													//Extensão do arquivo de cache(opcional)
-*		$config['crypt'] = false; 													//false desativa, adicione uma Chave de 64 digitos hexadecimal para ativar
-*	//Aplicar Configuração:
+*	//Parameters( = Default):
+*		$config['dir'] = __DIR__.'/cache/'; 										//Directory where the cache is stored
+*		$config['expire'] = 600; 													//0 to infinity - Values Accepted: int(Optional)
+*		$config['version'] = null; 													//null to disable - Values Accepted: float, string and int(Optional)
+*		$config['compress'] = 0;													//0 disable - Accepted Values: int 0-9(Optional)
+*		$config['cacheNameType'] = array('hash' => 'md5', 'prefix' => '%name%_'); 	//Use %name% to put the name of the cache in the prefix(Optional)
+*		$config['ext'] = '.lzp'; 													//Cache file extension(Optional)
+*	//Apply Configuration:
 *		$cache->Config($config);
 *
 *
@@ -55,46 +51,46 @@
 * Para obter um único cache:
 *	$cache->Get($cacheName, $getExpired, $cacheVersion);
 *	//Parametros( = Padrão):
-* 		$cacheName = 'nome_do_cache'; 									//Nome do cache(Parametro obrigatório)
-* 		$getExpired = false;											//Ignora se o cache já expirou(opcional)
-* 		$cacheVersion = false;											//Versão do cache a ser obtido - Valores Aceitos float, string e int(opcional)
+* 		$cacheName = 'cache_name'; 										//Cache name(Required)
+* 		$getExpired = false;											//Ignores cache expiration(Optional)
+* 		$cacheVersion = false;											//Cache version to be obtained - Values Accepted: float, string and int(Optional)
 *
 * Para obter múltiplos caches:
-* 	$cache->GetMultiples($cachesNames, $getExpired, $cacheVersion);		//Retorna um array($nomeDoCache=>$valor)
+* 	$cache->Get($cachesNames, $getExpired, $cacheVersion);				//Returns an array($cacheName => $value)
 * 	//Parametros( = Padrão):
-*		$cachesNames = array('nome_do_cache00', 'nome_do_cache01');		//Array contendo o Nome de cada cache(Parametro obrigatório)
-*		$getExpired = false;											//Ignora se o cache já expirou(opcional)
-* 		$cacheVersion = false;											//Versão do cache a ser obtido - Valores Aceitos float, string e int(opcional)
+*		$cachesNames = array('nome_do_cache00', 'nome_do_cache01');		//Array containing the name of each cache(Required)
+*		$getExpired = false;											//Ignores cache expiration(Optional)
+* 		$cacheVersion = false;											//Cache version to be obtained - Values Accepted: float, string and int(Optional)
 *
 *
 *
 * Para criar um cache:
-* 	$cache->Create($cacheName, $data, $cacheVersion, $config); 								//Retorna true em caso de sucesso
+* 	$cache->Create($cacheName, $data, $cacheVersion, $config); 								//Returns true if successful
 *	//Parametros( = Padrão):
-* 		$cacheName = 'nome_do_cache';														//Nome do cache(Parametro obrigatório)
-* 		$data = 'dadosDoCache';																//Dados a serem guardados no cache, tudo é aceito(Parametro obrigatório)
-* 		$cacheVersion = false;																//Versão do cache a ser criado - Valores Aceitos(float, string, int) - (opcional)
-*		$config = false;																	//Configurações para o cache Aceito: array('expire', 'compress')
+* 		$cacheName = 'nome_do_cache';														//Cache name(Required)
+* 		$data = 'dadosDoCache';																//Cache data(Required)
+* 		$cacheVersion = false;																//Cache version to be created - Values Accepted: float, string and int(Optional)
+*		$config = false;																	//Settings for the cache: array('expire', 'compress')
 *
 * Para criar múltiplos caches:
-*  	$cache->CreateMultiples($namesValues, $cacheVersion); 									//Retorna um array($nomecache=>$foiCriado) se o cache foi criado com sucesso $foiCriado recebe true
+*  	$cache->CreateMultiples($namesValues, $cacheVersion); 									//Returns an array($nomecache=>$isCreated)
 *	//Parametros( = Padrão):
-*		$namesValues = array('nome_do_cache00' => $value, 'nome_do_cache01' => $value); 	//Array contendo os Nomes e os valores dos caches a serem criados(Parametro obrigatório)
-*		$cacheVersion = false; 																//Versão dos caches a serem criados - Valores Aceitos float, string e int(opcional)
+*		$namesValues = array('nome_do_cache00' => $value, 'nome_do_cache01' => $value); 	//Array containing the name of each cache to be created(Required)
+*		$cacheVersion = false; 																//Cache version to be created - Values Accepted: float, string and int(Optional)
 *
 *
 *
 * Para deletar um cache
 * 	$cache->Delete($cacheName, $cacheVersion); 							//Retorna true se o cache for excluido, false em caso de falha e null caso o cache não exista
 * 	//Parametros( = Padrão):
-* 		$cacheName = 'nome_do_cache'; 									//Nome do cache(Parametro obrigatório)
-* 		$cacheVersion = false; 											//Versão do cache a ser deletado - Valores Aceitos float, string e int(opcional)
+* 		$cacheName = 'nome_do_cache'; 									//Nome do cache(Required)
+* 		$cacheVersion = false; 											//Versão do cache a ser deletado - Valores Aceitos float, string e int(Optional)
 *
 * Para Deletar Múltiplos caches
-* 	$cache->DeleteMultiples($cachesNames, $cacheVersion); 				//Retorna um array($nomecache=>$foiDeletado), $foiDeletado = true(sucesso), false(falha) ou null(cache não existe)
+* 	$cache->Delete($cachesNames, $cacheVersion); 						//Retorna um array($nomecache=>$foiDeletado), $foiDeletado = true(sucesso), false(falha) ou null(cache não existe)
 * 	//Parametros( = Padrão):
-* 		$cachesNames = array('nome_do_cache00', 'nome_do_cache01'); 	//Array contendo o Nome de cada cache(Parametro obrigatório)
-*		$cacheVersion = false; 											//Versão dos caches a serem deletados - Valores Aceitos float, string e int(opcional)
+* 		$cachesNames = array('nome_do_cache00', 'nome_do_cache01'); 	//Array contendo o Nome de cada cache(Required)
+*		$cacheVersion = false; 											//Versão dos caches a serem deletados - Valores Aceitos float, string e int(Optional)
 *
 * Para deletar todos os caches
 * 	$cache->DeleteAll($cacheVersion); 									//Retorna true se os caches forem excluídos
@@ -102,29 +98,39 @@
 * 		$cacheVersion = false; 											//Deleta os caches de uma certa versão - Valores Aceitos float, string e int(Parametro opicional)
 *
 *
-*
 * Para verificar se um cache existe
-* 	$cache->Exists($cacheName, $cacheVersion);
+* 	$cache->Exists($cacheName, $cacheVersion);							//Retorna true se o cache existe
 * 	//Parametros( = Padrão):
-* 		$cacheName = 'nome_do_cache'; 									//Nome do cache(Parametro obrigatório)
-*		$cacheVersion = false; 											//Versão a ser verificada - Valores Aceitos float, string e int(opcional)
+* 		$cacheName = 'nome_do_cache'; 									//Nome do cache(Required)
+*		$cacheVersion = false; 											//Versão a ser verificada - Valores Aceitos float, string e int(Optional)
 *
 * Para verificar se vários caches existem
-* 	$cache->ExistsMultiples($cachesNames, $cacheVersion);
+* 	$cache->Exists($cachesNames, $cacheVersion);						//Retorna um array($nomecache=>$exists)
 * 	//Parametros( = Padrão):
-* 		$cachesNames = array('nome_do_cache00', 'nome_do_cache01'); 	//Array contendo o Nome de cada cache(Parametro obrigatório)
-*		$cacheVersion = false; 											//Versão a ser verificada - Valores Aceitos float, string e int(opcional)
+* 		$cachesNames = array('nome_do_cache00', 'nome_do_cache01'); 	//Array contendo o Nome de cada cache(Required)
+*		$cacheVersion = false; 											//Versão a ser verificada - Valores Aceitos float, string e int(Optional)
+*
 *
 *
 * Para verificar o tamanho do diretório de cache
-*	$cache->DirSize($dir, $version);
+*	$cache->Size($dir, $version);
 *	//Parametros( = Padrão):
-*		$dir = null;								//Diretório a ser verificado(opcional)	
-*		$cacheVersion = false; 						//Retorna o tamanho do cache de uma certa versão - Valores Aceitos float, string e int(opcional)
+*		$dir = null;								//Diretório a ser verificado(Optional)	
+*		$cacheVersion = false; 						//Retorna o tamanho do cache de uma certa versão - Valores Aceitos float, string e int(Optional)
 *
 *
 *
 *** ChangeLog ***
+#####################################################################
+# V 2.0.0															#
+# -Código Reescrito													#
+# -Performance Otimizada											#
+# -Removida Criptografia do cache									#
+# -Documentação atualizada											#
+# -Modificado DirSize -> Size										#
+# -Função Unida ExistsMultiples -> Exists							#
+# -Função Unida GetMultiples -> Get									#
+# -Função Unida DeleteMultiples -> Delete							#
 #####################################################################
 # V 1.3.0															#
 # -Performance Otimizada											#
@@ -140,7 +146,7 @@
 # -Extensão padrão modificada para(.lzp)							#
 #####################################################################
 # V 1.2.1															#
-# -Argumento opcional adicionado nas Configurações('version')		#
+# -Argumento Optional adicionado nas Configurações('version')		#
 # -Performance Otimizada											#
 #####################################################################
 # V 1.2.0															#
@@ -161,7 +167,7 @@
 # Delete -> Retorna true(sucesso), false(falha) ou null(não existe)	#
 #####################################################################
 # V 1.1.0															#
-# -Novo argumento opcional($cacheVersion)							#
+# -Novo argumento Optional($cacheVersion)							#
 # -Melhor documentação												#
 # -Performance Otimizada											#
 # -Nova função(cacheDirSize)										#
@@ -171,6 +177,9 @@
 #####################################################################
 */
 class Cache{
+	const VERSION = '2.0.0';
+	const DS = DIRECTORY_SEPARATOR;
+	
 	#######
 	# CFG #
 	#######
@@ -180,73 +189,115 @@ class Cache{
 	# CONSTRUCT #
 	#############
 	function __construct($config = false){
-		$configDefault = array('dir' => __DIR__.'/cache/', 'expire' => 600, 'version' => false, 'compress' => 0, 'cacheNameType' => array('hash' => 'md5', 'prefix' => '%name%_'), 'ext' => '.lzp', 'crypt' => false);
-		if(is_array($config))$this->cfg = array_replace($configDefault, $config);
-		if(!is_dir($this->cfg['dir']))mkdir($this->cfg['dir'], 0755, true);
+		$configDefault = array(
+			'dir' => (__DIR__).self::DS.'cache'.self::DS, 
+			'expire' => 600, 
+			'compress' => 0, 
+			'memcache' => false,
+			'version' => null, 
+			'cacheNameType' => array('hash' => 'md5', 'prefix' => '%name%_'), 
+			'ext' => '.lzp'
+		);
+		if(is_array($config))
+			$this->cfg = array_replace($configDefault, $config);
+		else
+			$this->cfg = $configDefault;
+
+		if(!is_dir($this->cfg['dir'])){
+			mkdir($this->cfg['dir'], 0755, true);
+		}
 	}
 
 	#################################################
 	# CONFIG/NAME/ENCODE/DECODE/COMPRESS/UNCOMPRESS #
 	#################################################
-	public  function Config($config){if(is_array($config)){$this->cfg = array_replace($this->cfg, $config);if(!is_dir($this->cfg['dir']))mkdir($this->cfg['dir'], 0755, true);}}
-	private function Filter($name){return preg_replace("/[^a-zA-Z0-9_.-]/", "", $name);}
-	private function Name($name){$name = strtolower($name);$name = $this->Filter($name);$name = is_array($this->cfg['cacheNameType'])?str_ireplace('%name%', $name, $this->cfg['cacheNameType']['prefix']).hash($this->cfg['cacheNameType']['hash'], $name):false;return $name;}
-    private function Encode($data){return (is_array($data) || is_object($data))?serialize($data):$data;}
-    private function Decode($data){$x = @unserialize($data);return ($x === 'b:0;' || $x !== false)?$x:$data;}
-	private function Compress($data, $compress){return (function_exists('gzdeflate') && function_exists('gzinflate'))?gzdeflate($data, $compress):$data;}
-	private function Uncompress($data){return (function_exists('gzinflate'))?gzinflate($data):$data;}
-	private function GetVersion($version){return (!empty($version))?$this->Filter($version):(!empty($this->cfg['version']))?$this->Filter($this->cfg['version']):'';}
-	private function Encrypt($encrypt){$encrypt=serialize($encrypt);$iv=mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_TWOFISH,MCRYPT_MODE_CBC),MCRYPT_DEV_URANDOM);$key=pack('H*',$this->cfg['cryptkey']);$mac=hash_hmac('sha256',$encrypt,substr(bin2hex($key),-32));$passcrypt=mcrypt_encrypt(MCRYPT_TWOFISH,$key,$encrypt.$mac,MCRYPT_MODE_CBC,$iv);$encoded=base64_encode($passcrypt).'!'.base64_encode($iv);return  $encoded;}
-	private function Decrypt($decrypt){$decrypt=explode('!',$decrypt.'!');$decoded=base64_decode($decrypt[0]);$iv=base64_decode($decrypt[1]);if(strlen($iv)!==mcrypt_get_iv_size(MCRYPT_TWOFISH,MCRYPT_MODE_CBC))return false;$key=pack('H*',$this->cfg['cryptkey']);$decrypted=trim(mcrypt_decrypt(MCRYPT_TWOFISH,$key,$decoded,MCRYPT_MODE_CBC, $iv));$mac=substr($decrypted,-64);$decrypted=substr($decrypted,0,-64);$calcmac=hash_hmac('sha256',$decrypted,substr(bin2hex($key), -32));if($calcmac!==$mac)return false;return unserialize($decrypted);}
+	public function Config($config){
+		$this->cfg = array_replace($this->cfg, $config);
+		if(!is_dir($this->cfg['dir'])){
+			mkdir($this->cfg['dir'], 0755, true);
+		}
+	}
+
+	private function Filter($name){
+		return preg_replace("/[^a-zA-Z0-9_.-]/", "", $name);
+	}
+
+	private function Name($name){
+		$name = $this->Filter(strtolower($name));
+		$name = str_ireplace('%name%', $name, $this->cfg['cacheNameType']['prefix']).hash($this->cfg['cacheNameType']['hash'], $name);
+
+		return $name;
+	}
+
+	private function Encode($data){
+		return (is_array($data) || is_object($data)) ? serialize($data) : $data;
+	}
+
+	private function Decode($data){
+		$x = @unserialize($data);
+		return ($x === 'b:0;' || $x !== false) ? $x : $data;
+	}
+
+	private function Compress($data, $compressLevel){
+		return (function_exists('gzdeflate') && function_exists('gzinflate')) ? gzdeflate($data, $compressLevel) : $data;
+	}
+
+	private function Uncompress($data){
+		return function_exists('gzinflate') ? gzinflate($data) : $data;
+	}
+
+	private function GetVersion($version){
+		$version = !is_null($version) ? $version : $this->cfg['version'];
+		return !is_null($version) ? $this->Filter($version) : '';
+	}
 
 	##########
 	# EXISTS #
 	##########
-	public function Exists($name, $version=false){
-		$file = $this->cfg['dir'].$this->GetVersion($version).$this->Name($name).$this->cfg['ext'];
-		return (is_file($file) && is_readable($file));
-	}
-
-	####################
-	# EXISTS MULTIPLES #
-	####################
-	public function ExistsMultiples($names, $version=false){
+	public function Exists($names, $version=null){
 		$version = $this->GetVersion($version);
-		foreach($names as $name){
-			$file = $this->cfg['dir'].$version.$this->Name($name).$this->cfg['ext'];
-			$exists[$name] = (is_file($file) && is_readable($file));
+
+		if(is_array($names)){
+			foreach($names as $name){
+				$file = $this->cfg['dir'].$version.$this->Name($name).$this->cfg['ext'];
+				$exists[$name] = (is_file($file) && is_readable($file));
+			}
+		}else{
+			$file = $this->cfg['dir'].$this->GetVersion($version).$this->Name($names).$this->cfg['ext'];
+			$exists = (is_file($file) && is_readable($file));
 		}
+
 		return $exists;
 	}
 
 	##########
 	# CREATE #
 	##########
-	public function Create($name, $data, $version=false, $config=false){
-		if(!is_writeable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para escrita');
+	public function Create($name, $data, $version=null, $config=null){
+		if(!is_writeable($this->cfg['dir'])){
+			die('Direrório não diponível ou sem permissão para escrita');
+		}
 		$name = $this->Name($name);
 		$data = $this->Encode($data);
 		$version = $this->GetVersion($version);
 		$path = $this->cfg['dir'].$version;
 
-		$crypt = false;
-		/*if($this->cfg['crypt']!==false && ctype_xdigit($this->cfg['crypt']) && isset($this->cfg['crypt'][63])){$data = $this->Encrypt($data);$crypt = true;}*/
-
-		$expire = isset($config['expire'])?$config['expire']:$this->cfg['expire'];
-		$expire = ($expire!=0)?(time() + (Int)$expire):0;
-		$compress = isset($config['compress'])?$config['compress']:$this->cfg['compress'];
-		$compress = ($compress > 0 && $compress < 10)?$compress:0;
+		$expire = isset($config['expire']) ? $config['expire'] : $this->cfg['expire'];
+		$expire = ($expire!=0) ? (time() + (Int)$expire) : 0;
+		$compress = isset($config['compress']) ? $config['compress'] : $this->cfg['compress'];
+		$compress = ($compress > 0 && $compress < 10) ? $compress : 0;
 
 		$cacheData = array(
 			'compress' => $compress,
 			'expire' => $expire,
-			'crypt' => $crypt,
-			'data' => ($compress > 0)?$this->Compress($data, $compress):$data
+			'data' => ($compress > 0) ? $this->Compress($data, $compress) : $data
 		);
 
 		$cacheData = $this->Encode($cacheData);
 
-		if(!is_dir($path)){mkdir($path, 0775, true);}
+		if(!is_dir($path)){
+			mkdir($path, 0775, true);
+		}
 
 		return file_put_contents($path.$name.$this->cfg['ext'], $cacheData);
 	}
@@ -254,10 +305,12 @@ class Cache{
 	####################
 	# CREATE MULTIPLES #
 	####################
-	public function CreateMultiples($values, $version=false){
-		if(!is_writeable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para escrita');
-		$compress = ($this->cfg['compress'] > 0 && $this->cfg['compress'] < 10)?$this->cfg['compress']:0;
-		$expire = ($this->cfg['expire']!=0)?(time() + (Int)$this->cfg['expire']):0;
+	public function CreateMultiples($values, $version=null){
+		if(!is_writeable($this->cfg['dir'])){
+			die('Direrório não diponível ou sem permissão para escrita');
+		}
+		$compress = ($this->cfg['compress'] > 0 && $this->cfg['compress'] < 10) ? $this->cfg['compress'] : 0;
+		$expire = ($this->cfg['expire']!=0) ? (time() + (Int)$this->cfg['expire']) : 0;
 		$version = $this->GetVersion($version);
 
 		foreach($values as $name=>$data){
@@ -267,7 +320,7 @@ class Cache{
 			$cacheData = array(
 				'compress' => $compress,
 				'expire' => $expire,
-				'data' => ($compress > 0)?$this->Compress($data, $compress):$data
+				'data' => ($compress > 0) ? $this->Compress($data, $compress) : $data
 			);
 
 			$cacheData = $this->Encode($cacheData);
@@ -279,59 +332,61 @@ class Cache{
 	#######
 	# GET #
 	#######
-	public function Get($name, $expired=false, $version=false){
-		if(!is_readable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para leitura');
-		$name = $this->Name($name);
+	public function Get($names, $expired=false, $version=null){
+		$data = null;
 		$version = $this->GetVersion($version);
-		$file = $this->cfg['dir'].$version.$name.$this->cfg['ext'];
 
-		if(is_readable($file)){
-			$cacheData = $this->Decode(file_get_contents($file));
-			if($cacheData['expire'] == 0 || time() <= $cacheData['expire'] || $expired===true){
-				$data = $cacheData['data'];
-				$data = ($cacheData['compress'] > 0)?$this->Uncompress($data):$data;
-				$data = $this->Decode($data);
-				
-				/*if(isset($cacheData['crypt']) && $cacheData['crypt'] && ctype_xdigit($this->cfg['crypt']) && isset($this->cfg['crypt'][63]))$data = $this->Decrypt($data);*/
+		if(!is_readable($this->cfg['dir'])){
+			die('Direrório não diponível ou sem permissão para leitura');
+		}
 
-				return $data;
+		if(is_array($names)){
+			foreach($names as $name){
+				$file = $this->cfg['dir'].$version.$this->Name($name).$this->cfg['ext'];
+				if(is_readable($file)){
+					$file = file_get_contents($file);
+					$cacheData = $this->Decode($file);
+					if($cacheData['expire'] == 0 || time() <= $cacheData['expire'] || $expired===true){
+						$data = $cacheData['data'];
+						$data = ($cacheData['compress'] > 0) ? $this->Uncompress($data) : $data;
+						$data[$name] = $this->Decode($data);
+					}
+				}
+			}
+		}else{
+			$file = $this->cfg['dir'].$version.$this->Name($names).$this->cfg['ext'];
+
+			if(is_readable($file)){
+				$cacheData = $this->Decode(file_get_contents($file));
+				if($cacheData['expire'] == 0 || time() <= $cacheData['expire'] || $expired===true){
+					$data = $cacheData['data'];
+					$data = ($cacheData['compress'] > 0) ? $this->Uncompress($data) : $data;
+					$data = $this->Decode($data);
+				}
 			}
 		}
-		return null;
-	}
-
-	#################
-	# GET MULTIPLES #
-	#################
-	public function GetMultiples($names, $expired=false, $version=false){
-		if(!is_readable($this->cfg['dir']))die('Direrório não diponível ou sem permissão para leitura');
-		foreach($names as $name){
-			$data[$name] = $this->Get($name, $expired, $version);
-		}
+		
 		return $data;
 	}
 
 	##########
 	# DELETE #
 	##########
-	public function Delete($name, $version=false){
+	public function Delete($names, $version=null){
 		if(!is_writeable($this->cfg['dir']) && !is_readable($this->cfg['dir']))return;
-		$name = $this->Name($name);
+		$del = null;
 		$version = $this->GetVersion($version);
-		$file = $this->cfg['dir'].$version.$name.$this->cfg['ext'];
 
-		if(is_file($file)){return @unlink($file);}else{return null;}
-		return false;
-	}
-
-	####################
-	# DELETE MULTIPLES #
-	####################
-	public function DeleteMultiples($names, $version = false){
-		if(!is_writeable($this->cfg['dir']) && !is_readable($this->cfg['dir']))return;
-		$del = array();
-		foreach($names as $name){
-			$del[$name] = $this->Delete($name, $version);
+		if(is_array($names)){
+			foreach($names as $name){
+				$file = $this->cfg['dir'].$version.$this->Name($name).$this->cfg['ext'];
+				$del[$name] = is_file($file) ? @unlink($file) : null;
+			}
+		}else{
+			$file = $this->cfg['dir'].$version.$this->Name($name).$this->cfg['ext'];
+			if(is_file($file)){
+				$del = @unlink($file);
+			}
 		}
 		return $del;
 	}
@@ -339,28 +394,34 @@ class Cache{
 	##############
 	# DELETE ALL #
 	##############
-	public function DeleteAll($version=false){
+	public function DeleteAll($version=null){
 		if(!is_writeable($this->cfg['dir']) && !is_readable($this->cfg['dir']))return;
-		$del = array();
+		$del = null;
+
 		$files = glob($this->cfg['dir'].$this->GetVersion($version).'/*', GLOB_NOSORT);
 		foreach($files as $file){
-		  if(is_file($file)){$del[] = @unlink($file);}
+			if(is_file($file)){
+				$del[] = @unlink($file);
+			}
 		}
-		return !in_array(false, $del);
+		return (!is_null($del) && !in_array(false, $del));
 	}
 
-	##################
-	# CACHE DIR SIZE #
-	##################
-	function DirSize($dir=null, $version=false){
-		$dir = (($dir!=null)?$dir:$this->cfg['dir']).$this->GetVersion($version);
-		if(!is_readable($dir))die('Direrório não diponível ou sem permissão para leitura');
+	########
+	# SIZE #
+	########
+	public function Size($dir=null, $version=null){
+		$dir = (!is_null($dir) ? $dir : $this->cfg['dir']).$this->GetVersion($version);
+		if(!is_readable($dir)){
+			die('Direrório não diponível ou sem permissão para leitura');
+		}
 		$size = 0;
-		$extSize = [' B', ' KB', ' MB', ' GB', ' TB', ' PB', ' EB', ' ZB', ' YB'];
 		$files = glob(rtrim($dir, '/').'/*', GLOB_NOSORT);
 		foreach($files as $file){
-			$size += is_file($file) ? filesize($file) : $this->DirSize($file, $version);
+			$size += is_file($file) ? filesize($file) : $this->Size($file, $version);
 		}
+
+		$extSize = [' B', ' KB', ' MB', ' GB', ' TB', ' PB', ' EB', ' ZB', ' YB'];
 
 		return ($size ? round($size/pow(1024, ($i = floor(log($size, 1024)))), 2) . $extSize[$i] : 'Vazio');
 	}
