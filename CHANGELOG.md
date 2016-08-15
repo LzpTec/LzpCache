@@ -25,7 +25,7 @@
 
 -Documentação atualizada
 
--Criptografia do cache(Consome desempenho)
+-Criptografia do cache(Consome desempenho - Necessário remover comentários do código)
 
 -Modificado CacheDirSize -> DirSize
 
