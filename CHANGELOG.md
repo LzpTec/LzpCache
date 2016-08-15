@@ -1,7 +1,24 @@
 # LzpCache Changelog
 
 ## Versão Atual
-1.3.0 - 16/06/2016
+2.0.0(Alpha) - 15/08/2016
+
+## V 2.0.0
+-Código Reescrito
+
+-Performance Otimizada
+
+-Removida Criptografia do cache
+
+-Documentação atualizada
+
+-Modificado DirSize -> Size
+
+-Função Unida ExistsMultiples -> Exists
+
+-Função Unida GetMultiples -> Get
+
+-Função Unida DeleteMultiples -> Delete
 
 ## V 1.3.0
 -Performance Otimizada
