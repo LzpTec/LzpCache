@@ -4,6 +4,8 @@
 2.0.0(Alpha) - 15/08/2016
 
 ## V 2.0.0
+-Código Documentado
+
 -Código Reescrito
 
 -Performance Otimizada
