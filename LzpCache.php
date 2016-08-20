@@ -126,6 +126,7 @@
 *** ChangeLog ***
 #####################################################################
 # V 2.0.0															#
+# -Diretórios agora são criados com permissão 0777					#
 # -Código Documentado												#
 # -Código Reescrito													#
 # -Performance Otimizada											#
@@ -215,7 +216,7 @@ class Cache{
 			throw new Exception('$config não é um array.');
 
 		if(!is_dir($this->cfg['dir']))
-			mkdir($this->cfg['dir'], 0755, true);
+			mkdir($this->cfg['dir'], 0777, true);
 	}
 
     /**
@@ -227,14 +228,14 @@ class Cache{
 	public function Config($config){
 		$this->cfg = array_replace($this->cfg, $config);
 		if(!is_dir($this->cfg['dir']))
-			mkdir($this->cfg['dir'], 0755, true);
+			mkdir($this->cfg['dir'], 0777, true);
 	}
 
     /**
      * Verifica se um ou mais caches existem
      * 
-     * @param mixed $names Nome do cache a ser obtido, ou um array contendo os nomes
-	 * @param mixed $version Versão do(s) cache(s) a ser(em) obtido(s)
+     * @param array|string $names Nome(s) do(s) cache(s) a ser(em) verificado(s)
+     * @param null|float|int|string $version Versão do(s) cache(s) a ser(em) obtido(s)
      * @return mixed
      */
 	public function Exists($names, $version=null){
@@ -280,7 +281,7 @@ class Cache{
 		$cacheData = $this->Encode($cacheData);
 
 		if(!is_dir($path))
-			mkdir($path, 0775, true);
+			mkdir($path, 0777, true);
 
 		return file_put_contents($path.$name.$this->cfg['ext'], $cacheData);
 	}
@@ -312,42 +313,47 @@ class Cache{
 		return $values;
 	}
 
-	#######
-	# GET #
-	#######
+    /**
+     * Obtém o(s) cache(s)
+     * 
+     * @param array|string $names Nome(s) do(s) cache(s) a ser(em) obtido(s)
+     * @param boolean $expired ignora se o cache já expirou
+     * @param null|float|int|string $version Versão do(s) cache(s) a ser(em) obtido(s)
+     * @return mixed
+     */
 	public function Get($names, $expired=false, $version=null){
-		$data = null;
+		$dir = $this->cfg['dir'];
 		$version = $this->GetVersion($version);
+		$ext = $this->cfg['ext'];
+		$path = $dir.$version;
 
-		if(!is_readable($this->cfg['dir']))
+		if(!is_readable($dir))
 			die('Direrório não diponível ou sem permissão para leitura');
 
 		if(is_array($names)){
 			foreach($names as $name){
-				$file = $this->cfg['dir'].$version.$this->Name($name).$this->cfg['ext'];
-				if(is_readable($file)){
-					$file = file_get_contents($file);
-					$cacheData = $this->Decode($file);
-					if($cacheData['expire'] == 0 || time() <= $cacheData['expire'] || $expired===true){
-						$data = $cacheData['data'];
-						$data = ($cacheData['compress'] > 0) ? $this->Uncompress($data) : $data;
-						$data[$name] = $this->Decode($data);
-					}
+				$name = $this->Name($name);
+				$file = $this->Read($path.$name.$ext);
+				$cache = $this->Decode($file);
+
+				if($cache['expire'] == 0 || time() < $cache['expire'] || $expired){
+					$cacheData = $cache['data'];
+					$cacheData = ($cache['compress'] > 0) ? $this->Uncompress($cacheData) : $cacheData;
+					$data[$name] = $this->Decode($cacheData);
 				}
 			}
 		}else{
-			$file = $this->cfg['dir'].$version.$this->Name($names).$this->cfg['ext'];
+			$name = $this->Name($names);
+			$data = $this->Read($path.$name.$ext);
+			$cache = $this->Decode($data);
 
-			if(is_readable($file)){
-				$cacheData = $this->Decode(file_get_contents($file));
-				if($cacheData['expire'] == 0 || time() <= $cacheData['expire'] || $expired===true){
-					$data = $cacheData['data'];
-					$data = ($cacheData['compress'] > 0) ? $this->Uncompress($data) : $data;
-					$data = $this->Decode($data);
-				}
+			if($cache['expire'] == 0 || time() < $cache['expire'] || $expired){
+				$data = $cache['data'];
+				$data = ($cache['compress'] > 0) ? $this->Uncompress($data) : $data;
+				$data = $this->Decode($data);
 			}
 		}
-		
+
 		return $data;
 	}
 
@@ -410,6 +416,19 @@ class Cache{
 	}
 
     /**
+     * Lê e retorna os dados de um arquivo
+     * 
+     * @param string $file arquivo para ser lido
+     * @return mixed
+     */
+	private function Read($file){
+		if(is_file($file))
+			return file_get_contents($file);
+		else
+			return null;
+	}
+
+    /**
      * Filtra uma string
      * 
      * @param string $data String para ser filtrada, removendo qualquer caractere inválido.
@@ -449,6 +468,9 @@ class Cache{
      * @return mixed
      */
 	private function Decode($data){
+		if(is_null($data))
+			return null;
+
 		$x = @unserialize($data);
 		return ($x === 'b:0;' || $x !== false) ? $x : $data;
 	}

@@ -1,9 +1,11 @@
 # LzpCache Changelog
 
 ## Versão Atual
-2.0.0(Alpha) - 15/08/2016
+2.0.0(Pré-Beta 2) - 20/08/2016
 
 ## V 2.0.0
+-Diretórios agora são criados com permissão 0777
+
 -Código Documentado
 
 -Código Reescrito
