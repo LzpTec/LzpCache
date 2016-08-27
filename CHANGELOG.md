@@ -1,7 +1,7 @@
 # LzpCache Changelog
 
 ## Versão Atual
-2.0.0(Pré-Beta 2) - 20/08/2016
+2.0.0(Beta) - 27/08/2016
 
 ## V 2.0.0
 -Diretórios agora são criados com permissão 0777
@@ -19,6 +19,8 @@
 -Modificado DirSize -> Size
 
 -Função Unida ExistsMultiples -> Exists
+
+-Função Unida CreateMultiples -> Create
 
 -Função Unida GetMultiples -> Get
 
