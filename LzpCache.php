@@ -61,21 +61,14 @@
 *		$getExpired = false;											//Ignora se o cache já expirou(opcional)
 * 		$cacheVersion = null;											//Versão do cache a ser obtido - Valores Aceitos float, string e int(opcional)
 *
+*												
 *
-*
-* Para criar um cache:
-* 	$cache->Create($cacheName, $data, $cacheVersion, $config); 								//Retorna true em caso de sucesso
+* Para criar um ou mais caches:
+*	$cache->Create($namesAndValues, $data, $cacheVersion, $config); 					//Retorna true em caso de sucesso
 *	//Parametros( = Padrão):
-* 		$cacheName = 'nome_do_cache';														//Nome do cache(Parametro obrigatório)
-* 		$data = 'dadosDoCache';																//Dados a serem guardados no cache, tudo é aceito(Parametro obrigatório)
-* 		$cacheVersion = null;																//Versão do cache a ser criado - Valores Aceitos(float, string, int) - (opcional)
-*		$config = false;																	//Configurações para o cache Aceito: array('expire', 'compress')
-*
-* Para criar múltiplos caches:
-*  	$cache->CreateMultiples($namesValues, $cacheVersion); 									//Retorna um array($nomecache=>$foiCriado)
-*	//Parametros( = Padrão):
-*		$namesValues = array('nome_do_cache00' => $value, 'nome_do_cache01' => $value); 	//Array contendo os Nomes e os valores dos caches a serem criados(Parametro obrigatório)
-*		$cacheVersion = null; 																//Versão dos caches a serem criados - Valores Aceitos float, string e int(opcional)
+*		$namesAndValues = array('nome_do_cache00' => $value); 							//Array contendo os Nomes e os valores dos caches a serem criados(Parametro obrigatório)
+*		$cacheVersion = null;															//Versão do cache a ser criado - Valores Aceitos(float, string, int) - (opcional)
+*		$config = false;																//Configurações para o cache Aceito: array('expire', 'compress')
 *
 *
 *
@@ -258,7 +251,7 @@ class Cache{
 	##########
 	# CREATE #
 	##########
-	public function Create($names, $data=null, $version=null, $config=null){
+	public function Create($datas, $version=null, $config=null){
 		$version = $this->GetVersion($version);
 		$path = $this->cfg['dir'].$version;
 
@@ -269,27 +262,11 @@ class Cache{
 		if(!is_dir($path))
 			mkdir($path, 0777, true);
 
-		if(is_array($names)){
-			$complete = array();
+		$complete = array();
 
-			foreach($names as $name=>$data){
-				$name = $this->Name($name);
-				$data = $this->Encode($data);
+		foreach($datas as $name=>$data){
+			$name = $this->Name($name);
 
-				$cacheData = array(
-					'compress' => $compress,
-					'expire' => $expire,
-					'data' => ($compress > 0) ? $this->Compress($data, $compress) : $data
-				);
-
-				$cacheData = $this->Encode($cacheData);
-				$complete[$name] = $this->Set($path.$name.$this->cfg['ext'], $cacheData);
-			}
-
-		}else{
-			$name = $this->Name($names);
-			$data = $this->Encode($data);
-			
 			$cacheData = array(
 				'compress' => $compress,
 				'expire' => $expire,
@@ -297,10 +274,14 @@ class Cache{
 			);
 
 			$cacheData = $this->Encode($cacheData);
-
-			$complete = $this->Set($path.$name.$this->cfg['ext'], $cacheData);
+			$complete[$name] = $this->Write($path.$name.$this->cfg['ext'], $cacheData);
 		}
+
 		return $complete;
+	}
+
+	public function Set($datas, $version=null, $config=null){
+		return $this->Create($datas, $version=null, $config=null);
 	}
 
     /**
@@ -321,6 +302,7 @@ class Cache{
 			die('Direrório não diponível ou sem permissão para leitura');
 
 		if(is_array($names)){
+			$data = array();
 			foreach($names as $name){
 				$name = $this->Name($name);
 				$file = $this->Read($path.$name.$ext);
@@ -328,8 +310,7 @@ class Cache{
 
 				if($cache['expire'] == 0 || time() < $cache['expire'] || $expired){
 					$cacheData = $cache['data'];
-					$cacheData = ($cache['compress'] > 0) ? $this->Uncompress($cacheData) : $cacheData;
-					$data[$name] = $this->Decode($cacheData);
+					$data[$name] = ($cache['compress'] > 0) ? $this->Uncompress($cacheData) : $cacheData;
 				}
 			}
 		}else{
@@ -340,7 +321,6 @@ class Cache{
 			if($cache['expire'] == 0 || time() < $cache['expire'] || $expired){
 				$data = $cache['data'];
 				$data = ($cache['compress'] > 0) ? $this->Uncompress($data) : $data;
-				$data = $this->Decode($data);
 			}
 		}
 
@@ -439,7 +419,7 @@ class Cache{
 	 * @param mixed $data dados a serem adicionados ao arquivo
      * @return mixed
      */
-	private function Set($file, $data){
+	private function Write($file, $data){
 		return file_put_contents($file, $data);
 	}
 
@@ -498,7 +478,8 @@ class Cache{
      * @return string
      */
 	private function Compress($data, $compressLevel){
-		return (function_exists('gzdeflate') && function_exists('gzinflate')) ? gzdeflate($data, $compressLevel) : $data;
+		$data = $this->Encode($data);
+		return function_exists('gzdeflate') ? gzdeflate($data, $compressLevel) : $data;
 	}
 
     /**
@@ -508,6 +489,7 @@ class Cache{
      * @return string
      */
 	private function Uncompress($data){
+		$data = $this->Decode($data);
 		return function_exists('gzinflate') ? gzinflate($data) : $data;
 	}
 

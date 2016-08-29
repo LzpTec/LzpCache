@@ -1,9 +1,13 @@
 # LzpCache Changelog
 
 ## Versão Atual
-2.0.0(Beta) - 27/08/2016
+2.0.0(Pré-Release) - 29/08/2016
 
 ## V 2.0.0
+-Função Create modificada
+
+-Nova função Set(Mesma coisa que a Create)
+
 -Diretórios agora são criados com permissão 0777
 
 -Código Documentado
