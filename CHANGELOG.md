@@ -1,9 +1,11 @@
 # LzpCache Changelog
 
 ## Versão Atual
-2.0.0(Pré-Release) - 29/08/2016
+2.0.0(Pré-Release 2) - 31/08/2016
 
 ## V 2.0.0
+-Novo parametro para Create($expire)
+
 -Função Create modificada
 
 -Nova função Set(Mesma coisa que a Create)
@@ -16,9 +18,13 @@
 
 -Performance Otimizada
 
--Removida Criptografia do cache
-
 -Documentação atualizada
+
+-Renomeado cacheNameType para cacheNameCfg
+
+-Removido parametro da Create($config)
+
+-Removida Criptografia do cache
 
 -Modificado DirSize -> Size
 
