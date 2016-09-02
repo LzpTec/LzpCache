@@ -1,14 +1,55 @@
 # LzpCache Changelog
 
 ## Versão Atual
-1.3.0 - 16/06/2016
+2.0.0 - 02/09/2016
+
+## V 2.0.0
+-Novo parametro para Create($expire)
+
+-Função Delete e Create modificada
+
+-Função DeleteAll renomeada para Clear
+
+-Nova função Set(Mesma coisa que a Create)
+
+-Nova função Read(Mesma coisa que a Get)
+
+-Nova função Remove(Mesma coisa que a Delete)
+
+-Diretórios agora são criados com permissão 0777
+
+-Código Documentado
+
+-Código Reescrito
+
+-Performance Otimizada
+
+-Documentação atualizada
+
+-Renomeado cacheNameType para cacheNameCfg
+
+-Removido parametro da Create($config)
+
+-Removida Criptografia do cache
+
+-Modificado DirSize -> Size
+
+-Função Unida ExistsMultiples -> Exists
+
+-Função Unida CreateMultiples -> Create
+
+-Função Unida GetMultiples -> Get
+
+-Função Unida DeleteMultiples -> Delete
+
+-Removido changelog do código
 
 ## V 1.3.0
 -Performance Otimizada
 
 -Documentação atualizada
 
--Criptografia do cache(Consome desempenho)
+-Criptografia do cache(Consome desempenho - Necessário remover comentários do código)
 
 -Modificado CacheDirSize -> DirSize
 
