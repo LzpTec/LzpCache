@@ -49,6 +49,7 @@
 *
 * Para obter um único cache:
 *	$cache->Get($cacheName, $getExpired, $version);
+*	$cache->Read($cacheName, $getExpired, $version);
 *	//Parametros( = Padrão):
 * 		$cacheName = 'nome_do_cache'; 								//Nome do cache(Parametro obrigatório)
 * 		$getExpired = false;										//Ignora se o cache já expirou(opcional)
