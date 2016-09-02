@@ -1,7 +1,10 @@
 # LzpCache Changelog
 
 ## Versão Atual
-1.3.0 - 16/06/2016
+1.4.0 - 01/09/2016
+
+## V 1.4.0
+-Criptografia do cache final adicionada(Consome desempenho)
 
 ## V 1.3.0
 -Performance Otimizada

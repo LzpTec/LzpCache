@@ -1,6 +1,6 @@
 <?php
 /**
- * LzpCache v1.3.0 - Requer PHP >= 5.5
+ * LzpCache v1.4.0 - Requer PHP >= 5.5
  *
  * @author André Posso <andre.posso@lzptec.com>
  * @copyright 2016 Lzp Tec
@@ -16,10 +16,6 @@
 * - Extensão do arquivo cache personalizada
 * - Criar/Obter/Deletar vários caches de uma vez
 * - É possível obter um cache mesmo que ele tenha expirado
-*
-*
-* Recursos ainda não implementados:
-* - Configuração personalizada para criar o cache($cache->Create($name, $data, $version, $config))
 *
 *
 * Recursos que talvez sejam introduzidos:
@@ -126,6 +122,9 @@
 *
 *** ChangeLog ***
 #####################################################################
+# V 1.4.0															#
+# -Criptografia do cache final adicionada(Consome desempenho)		#
+#####################################################################
 # V 1.3.0															#
 # -Performance Otimizada											#
 # -Documentação atualizada											#
@@ -230,7 +229,10 @@ class Cache{
 		$path = $this->cfg['dir'].$version;
 
 		$crypt = false;
-		/*if($this->cfg['crypt']!==false && ctype_xdigit($this->cfg['crypt']) && isset($this->cfg['crypt'][63])){$data = $this->Encrypt($data);$crypt = true;}*/
+		if($this->cfg['crypt']!==false && ctype_xdigit($this->cfg['crypt']) && isset($this->cfg['crypt'][63])){
+			$data = $this->Encrypt($data);
+			$crypt = true;
+		}
 
 		$expire = isset($config['expire'])?$config['expire']:$this->cfg['expire'];
 		$expire = ($expire!=0)?(time() + (Int)$expire):0;
@@ -292,7 +294,8 @@ class Cache{
 				$data = ($cacheData['compress'] > 0)?$this->Uncompress($data):$data;
 				$data = $this->Decode($data);
 				
-				/*if(isset($cacheData['crypt']) && $cacheData['crypt'] && ctype_xdigit($this->cfg['crypt']) && isset($this->cfg['crypt'][63]))$data = $this->Decrypt($data);*/
+				if(isset($cacheData['crypt']) && ctype_xdigit($this->cfg['crypt']) && isset($this->cfg['crypt'][63]))
+					$data = $this->Decrypt($data);
 
 				return $data;
 			}

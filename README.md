@@ -2,7 +2,7 @@
 **LzpCache** é uma classe para cache.
 
 ## Versão Atual
-1.3.0 - 16/06/2016
+1.4.0 - 01/09/2016(Última atualização da versão 1.X)
 
 
 ## Recursos
@@ -11,10 +11,6 @@
 - Extensão do arquivo cache personalizada
 - Criar/Obter/Deletar vários caches de uma vez
 - É possível obter um cache mesmo que ele tenha expirado
-
-
-## Recursos ainda não implementados
-- Configuração personalizada para criar o cache($cache->Create($name, $data, $version, $config))
 
 
 ## Recursos que talvez sejam introduzidos
