@@ -1,14 +1,20 @@
 # LzpCache Changelog
 
 ## Versão Atual
-2.0.0(Pré-Release 2) - 31/08/2016
+2.0.0 - 02/09/2016
 
 ## V 2.0.0
 -Novo parametro para Create($expire)
 
--Função Create modificada
+-Função Delete e Create modificada
+
+-Função DeleteAll renomeada para Clear
 
 -Nova função Set(Mesma coisa que a Create)
+
+-Nova função Read(Mesma coisa que a Get)
+
+-Nova função Remove(Mesma coisa que a Delete)
 
 -Diretórios agora são criados com permissão 0777
 
@@ -35,6 +41,8 @@
 -Função Unida GetMultiples -> Get
 
 -Função Unida DeleteMultiples -> Delete
+
+-Removido changelog do código
 
 ## V 1.3.0
 -Performance Otimizada

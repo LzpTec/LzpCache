@@ -2,9 +2,9 @@
 **LzpCache** é uma classe escrita em php para cache.
 
 ## Versão Atual
-2.0.0(Pré-Release 2) - 31/08/2016
+2.0.0 - 02/09/2016
 
-**LzpCache V2 Upgrade** os caches das versões anteriores não vão funcionar na nova versão
+**LzpCache V2** os caches das versões anteriores não vão funcionar na nova versão
 
 ## Recursos
 - Compressão do cache
@@ -46,14 +46,15 @@ Para obter um único cache:
 ```php
 $cache->Get($cacheName, $getExpired, $version);
 //Parametros( = Padrão):
-	$cacheName = 'nome_do_cache'; 									//Nome do cache(Parametro obrigatório)
-	$getExpired = false;											//Ignora se o cache já expirou(opcional)
-	$version = null;												//Versão do cache a ser obtido - Valores Aceitos float, string e int(opcional)
+	$cacheName = 'nome_do_cache'; 	//Nome do cache(Parametro obrigatório)
+	$getExpired = false;			//Ignora se o cache já expirou(opcional)
+	$version = null;				//Versão do cache a ser obtido - Valores Aceitos float, string e int(opcional)
 ```
 
 Para obter múltiplos caches:
 ```php
 $cache->Get($cachesNames, $getExpired, $version);					//Retorna um array($nomeDoCache=>$valor)
+$cache->Read($cachesNames, $getExpired, $version);
 //Parametros( = Padrão):
 	$cachesNames = array('nome_do_cache00', 'nome_do_cache01');		//Array contendo o Nome de cada cache(Parametro obrigatório)
 	$getExpired = false;											//Ignora se o cache já expirou(opcional)
@@ -62,33 +63,26 @@ $cache->Get($cachesNames, $getExpired, $version);					//Retorna um array($nomeDo
 
 Para criar um ou mais caches:
 ```php
-$cache->Create($namesAndValues, $expire, $version); 				//Retorna true em caso de sucesso
-$cache->Set($namesAndValues, $expire, $version); 					//Retorna true em caso de sucesso
+$cache->Create($namesAndValues, $expire, $version); 			//Retorna true em caso de sucesso
+$cache->Set($namesAndValues, $expire, $version); 				//Retorna true em caso de sucesso
 //Parametros( = Padrão):
-	$namesAndValues = array('nome_do_cache00' => $value); 			//Array contendo os Nomes e os valores dos caches a serem criados(Parametro obrigatório)
-	$expire = 0;													//Tempo do cache / 0 para infinito - Valor Aceito int(opcional)
-	$version = null;												//Versão do cache a ser criado - Valores Aceitos(float, string, int) - (opcional)
+	$namesAndValues = array('nome_do_cache00' => $value); 		//Array contendo os Nomes e os valores dos caches a serem criados(Parametro obrigatório)
+	$expire = 0;												//Tempo do cache / 0 para infinito - Valor Aceito int(opcional)
+	$version = null;											//Versão do cache a ser criado - Valores Aceitos(float, string, int) - (opcional)
 ```
 
-Para deletar um cache:
+Para deletar um ou mais caches:
 ```php
-$cache->Delete($cacheName, $version); 								//Retorna true se o cache for excluido, false em caso de falha e null caso o cache não exista
+$cache->Delete($cachesNames, $version); 				//Retorna um array($nomecache=>$foiDeletado), $foiDeletado = true(sucesso), false(falha) ou null(cache não existe)
+$cache->Remove($cachesNames, $version);
 //Parametros( = Padrão):
-	$cacheName = 'nome_do_cache'; 									//Nome do cache(Required)
-	$version = null; 												//Versão do cache a ser deletado - Valores Aceitos float, string e int(Opcional)
+	$cachesNames = array('nome_do_cache00', ...); 		//Array contendo o Nome de cada cache(Required)
+	$version = null; 									//Versão dos caches a serem deletados - Valores Aceitos float, string e int(Opcional)
 ```
 
-Para Deletar Múltiplos caches:
 ```php
-$cache->Delete($cachesNames, $version); 							//Retorna um array($nomecache=>$foiDeletado), $foiDeletado = true(sucesso), false(falha) ou null(cache não existe)
-//Parametros( = Padrão):
-	$cachesNames = array('nome_do_cache00', 'nome_do_cache01'); 	//Array contendo o Nome de cada cache(Required)
-	$version = null; 												//Versão dos caches a serem deletados - Valores Aceitos float, string e int(Opcional)
-```
-
 Para deletar todos os caches:
-```php
-$cache->DeleteAll($version); 		//Retorna true se os caches forem excluídos
+$cache->Clear($version); 			//Retorna true se os caches forem excluídos
 //Parametros( = Padrão):
 	$version = null; 				//Deleta os caches de uma certa versão - Valores Aceitos float, string e int(Parametro opicional)
 ```
