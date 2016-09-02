@@ -1,7 +1,24 @@
 # LzpCache Changelog
 
 ## Versão Atual
-2.0.0 - 02/09/2016
+2.0.1 - 02/09/2016
+
+## V 2.0.1
+-Removida a configuração cacheNameCfg
+
+-Nova configuração nameHash
+
+-Novo Sistema de nome
+
+-Performance Otimizada
+
+-Melhorias na documentação
+
+-Removido argumento dir da função Size
+
+-Corrigido um bug no sistema de versão do cache
+
+-Corrigido bug na função delete
 
 ## V 2.0.0
 -Novo parametro para Create($expire)
@@ -26,13 +43,13 @@
 
 -Documentação atualizada
 
--Renomeado cacheNameType para cacheNameCfg
+-Configuração cacheNameType renomeada para cacheNameCfg
 
 -Removido parametro da Create($config)
 
 -Removida Criptografia do cache
 
--Modificado DirSize -> Size
+-Renomeado DirSize para Size
 
 -Função Unida ExistsMultiples -> Exists
 
