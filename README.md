@@ -2,7 +2,7 @@
 **LzpCache** é uma classe escrita em php para cache.
 
 ## Versão Atual
-2.0.1 - 02/09/2016
+2.0.2 - 03/09/2016
 
 **LzpCache V2** os caches das versões anteriores não vão funcionar na nova versão
 
@@ -12,6 +12,7 @@
 - Extensão do arquivo cache personalizada
 - Criar/Obter/Deletar vários caches de uma vez
 - É possível obter um cache mesmo que ele tenha expirado
+- Compressão LZF e Bzip2
 
 
 ## Recursos que talvez sejam introduzidos
@@ -30,7 +31,7 @@ Inicializar:
 Para Configurar:
 ```php
 //Configurações
-	$config = array('dir', 'expire', 'version', 'compress', 'nameHash', 'ext', 'useNewNameSystem');
+	$config = array('dir', 'expire', 'version', 'compress', 'nameHash', 'ext', 'useNewNameSystem', 'useLZF', 'useBZ');
 //Parametros( = Padrão):
 	$config['dir'] = __DIR__.'/cache/'; 				//Caminho do Diretório onde o cache será armazenado
 	$config['expire'] = 600; 							//0 para infinito - Valor Aceito int(opcional)
@@ -39,6 +40,8 @@ Para Configurar:
 	$config['nameHash'] = 'md5'							//Hash para gerar o nome do cache(opcional)
 	$config['ext'] = '.lzp'; 							//Extensão do arquivo de cache(opcional)
 	$config['useNewNameSystem'] = false; 				//Novo sistema de nome dos arquivos, nomes melhores e limitados a 30 caracteres
+	$config['useLZF'] = false; 							//Substui a compressão Gzip pela compressão Lzf
+	$config['useBZ'] = false; 							//Substui a compressão Gzip pela compressão Bzip2
 //Aplicar Configuração:
 	$cache->Config($config);
 ```

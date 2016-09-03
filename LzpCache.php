@@ -1,6 +1,6 @@
 <?php
 /**
- * LzpCache v2.0.1 - Requer PHP >= 5.5
+ * LzpCache v2.0.2 - Requer PHP >= 5.5
  *
  * @author André Posso <andre.posso@lzptec.com>
  * @copyright 2016 Lzp Tec
@@ -43,6 +43,8 @@
 *		$config['nameHash'] = 'md5'							//Hash para gerar o nome do cache(opcional)
 *		$config['ext'] = '.lzp'; 							//Extensão do arquivo de cache(opcional)
 *		$config['useNewNameSystem'] = false;				//Novo sistema de nome dos arquivos, nomes melhores e limitados a 30 caracteres
+*		$config['useLZF'] = false; 							//Substui a compressão Gzip pela compressão Lzf
+*		$config['useBZ'] = false; 							//Substui a compressão Gzip pela compressão Bzip2
 *	//Aplicar Configuração:
 *		$cache->Config($config);
 *
@@ -132,11 +134,11 @@ class Cache{
 			'dir' => (__DIR__).self::DS.'cache'.self::DS, 
 			'expire' => 600, 
 			'compress' => 0, 
-			'memcache' => false,
 			'version' => null, 
 			'nameHash' => 'md5', 
 			'ext' => '.lzp',
-			'useNewNameSystem' => false
+			'useNewNameSystem' => false,
+			'useLZF' => false
 		);
 
 		if(is_array($config))
@@ -444,7 +446,12 @@ class Cache{
      */
 	private function Compress($data, $compressLevel){
 		$data = $this->Encode($data);
-		return function_exists('gzdeflate') ? gzdeflate($data, $compressLevel) : $data;
+		if($this->cfg['useBZ'])
+			return function_exists('bzcompress') ? bzcompress($data, $compressLv) : $data;
+		elseif($this->cfg['useLZF'])
+			return function_exists('lzf_compress') ? lzf_compress($data) : $data;
+		else
+			return function_exists('gzdeflate') ? gzdeflate($data, $compressLv) : $data;
 	}
 
     /**
@@ -455,7 +462,12 @@ class Cache{
      */
 	private function Uncompress($data){
 		$data = $this->Decode($data);
-		return function_exists('gzinflate') ? gzinflate($data) : $data;
+		if($this->cfg['useBZ'])
+			return function_exists('bzdecompress') ? bzdecompress($data, $compressLv) : $data;
+		elseif($this->cfg['useLZF'])
+			return function_exists('lzf_decompress') ? lzf_decompress($data) : $data
+		else
+			return function_exists('gzinflate') ? gzinflate($data) : $data;
 	}
 
     /**
