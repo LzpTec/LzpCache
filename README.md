@@ -2,7 +2,7 @@
 **LzpCache** é uma classe escrita em php para cache.
 
 ## Versão Atual
-2.0.0 - 02/09/2016
+2.0.2 - 03/09/2016
 
 **LzpCache V2** os caches das versões anteriores não vão funcionar na nova versão
 
@@ -12,6 +12,7 @@
 - Extensão do arquivo cache personalizada
 - Criar/Obter/Deletar vários caches de uma vez
 - É possível obter um cache mesmo que ele tenha expirado
+- Compressão LZF e Bzip2
 
 
 ## Recursos que talvez sejam introduzidos
@@ -30,14 +31,17 @@ Inicializar:
 Para Configurar:
 ```php
 //Configurações
-	$config = array('dir', 'expire', 'version', 'compress', 'cacheNameCfg', 'ext');
+	$config = array('dir', 'expire', 'version', 'compress', 'nameHash', 'ext', 'useNewNameSystem', 'useLZF', 'useBZ');
 //Parametros( = Padrão):
-	$config['dir'] = __DIR__.'/cache/'; 										//Caminho do Diretório onde o cache será armazenado
-	$config['expire'] = 600; 													//0 para infinito - Valor Aceito int(opcional)
-	$config['version'] = null; 													//null desativa - Valores Aceitos float, string e int(opcional)
-	$config['compress'] = 0;													//0 desativa - Valor Aceito int de 0 a 9(opcional)
-	$config['cacheNameCfg'] = array('hash' => 'md5', 'prefix' => '%name%_'); 	//Use %name% para colocar o nome do cache no prefixo(opcional)
-	$config['ext'] = '.lzp'; 													//Extensão do arquivo de cache(opcional)
+	$config['dir'] = __DIR__.'/cache/'; 				//Caminho do Diretório onde o cache será armazenado
+	$config['expire'] = 600; 							//0 para infinito - Valor Aceito int(opcional)
+	$config['version'] = null; 							//null desativa - Valores Aceitos float, string e int(opcional)
+	$config['compress'] = 0;							//0 desativa - Valor Aceito int de 0 a 9(opcional)
+	$config['nameHash'] = 'md5'							//Hash para gerar o nome do cache(opcional)
+	$config['ext'] = '.lzp'; 							//Extensão do arquivo de cache(opcional)
+	$config['useNewNameSystem'] = false; 				//Novo sistema de nome dos arquivos, nomes melhores e limitados a 30 caracteres
+	$config['useLZF'] = false; 							//Substui a compressão Gzip pela compressão Lzf
+	$config['useBZ'] = false; 							//Substui a compressão Gzip pela compressão Bzip2
 //Aplicar Configuração:
 	$cache->Config($config);
 ```
@@ -45,6 +49,7 @@ Para Configurar:
 Para obter um único cache:
 ```php
 $cache->Get($cacheName, $getExpired, $version);
+$cache->Read($cacheName, $getExpired, $version);
 //Parametros( = Padrão):
 	$cacheName = 'nome_do_cache'; 	//Nome do cache(Parametro obrigatório)
 	$getExpired = false;			//Ignora se o cache já expirou(opcional)
@@ -105,8 +110,7 @@ $cache->Exists($cachesNames, $version);								//Retorna um array($nomecache=>$e
 
 Para verificar o tamanho do diretório de cache:
 ```php
-$cache->Size($dir, $version);		//Retorna tamanho do diretório ou null(diretório vazio)
+$cache->Size($version);			//Retorna tamanho do diretório ou null(diretório vazio)
 //Parametros( = Padrão):
-	$dir = null;					//Diretório a ser verificado(Opcional)	
-	$version = null; 				//Retorna o tamanho do cache de uma certa versão - Valores Aceitos float, string e int(Opcional)
+	$version = null; 			//Retorna o tamanho do cache de uma certa versão - Valores Aceitos float, string e int(Opcional)
 ```

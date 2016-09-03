@@ -1,6 +1,6 @@
 <?php
 /**
- * LzpCache v2.0.0 - Requer PHP >= 5.5
+ * LzpCache v2.0.2 - Requer PHP >= 5.5
  *
  * @author André Posso <andre.posso@lzptec.com>
  * @copyright 2016 Lzp Tec
@@ -34,14 +34,17 @@
 *
 * Configurar:
 *	//Configurações
-*		$config = array('dir', 'expire', 'version', 'compress', 'cacheNameCfg', 'ext');
+*		$config = array('dir', 'expire', 'version', 'compress', 'nameHash', 'ext', 'useNewNameSystem');
 *	//Parametros( = Padrão):
-*		$config['dir'] = __DIR__.'/cache/'; 										//Caminho do Diretório onde o cache será armazenado
-*		$config['expire'] = 600; 													//0 para infinito - Valor Aceito int(opcional)
-*		$config['version'] = null; 													//null desativa - Valores Aceitos float, string e int(opcional)
-*		$config['compress'] = 0;													//0 desativa - Valor Aceito int de 0 a 9(opcional)
-*		$config['cacheNameCfg'] = array('hash' => 'md5', 'prefix' => '%name%_'); 	//Use %name% para colocar o nome do cache no prefixo(opcional)
-*		$config['ext'] = '.lzp'; 													//Extensão do arquivo de cache(opcional)
+*		$config['dir'] = __DIR__.'/cache/'; 				//Caminho do Diretório onde o cache será armazenado
+*		$config['expire'] = 600;							//0 para infinito - Valor Aceito int(opcional)
+*		$config['version'] = null; 							//null desativa - Valores Aceitos float, string e int(opcional)
+*		$config['compress'] = 0;							//0 desativa - Valor Aceito int de 0 a 9(opcional)
+*		$config['nameHash'] = 'md5'							//Hash para gerar o nome do cache(opcional)
+*		$config['ext'] = '.lzp'; 							//Extensão do arquivo de cache(opcional)
+*		$config['useNewNameSystem'] = false;				//Novo sistema de nome dos arquivos, nomes melhores e limitados a 30 caracteres
+*		$config['useLZF'] = false; 							//Substui a compressão Gzip pela compressão Lzf
+*		$config['useBZ'] = false; 							//Substui a compressão Gzip pela compressão Bzip2
 *	//Aplicar Configuração:
 *		$cache->Config($config);
 *
@@ -49,6 +52,7 @@
 *
 * Para obter um único cache:
 *	$cache->Get($cacheName, $getExpired, $version);
+*	$cache->Read($cacheName, $getExpired, $version);
 *	//Parametros( = Padrão):
 * 		$cacheName = 'nome_do_cache'; 								//Nome do cache(Parametro obrigatório)
 * 		$getExpired = false;										//Ignora se o cache já expirou(opcional)
@@ -102,9 +106,8 @@
 *
 *
 * Para verificar o tamanho do diretório de cache
-*	$cache->Size($dir, $version);
+*	$cache->Size($version);
 *	//Parametros( = Padrão):
-*		$dir = null;								//Diretório a ser verificado(Opcional)	
 *		$version = null; 							//Retorna o tamanho do cache de uma certa versão - Valores Aceitos float, string e int(Opcional)
 *
 *
@@ -118,6 +121,7 @@ class Cache{
      * @var array
      */
 	protected $cfg;
+	protected $tempFileSize;
 
     /**
      * Inicia junto com a classe
@@ -130,10 +134,11 @@ class Cache{
 			'dir' => (__DIR__).self::DS.'cache'.self::DS, 
 			'expire' => 600, 
 			'compress' => 0, 
-			'memcache' => false,
 			'version' => null, 
-			'cacheNameCfg' => array('hash' => 'md5', 'prefix' => '%name%_'), 
-			'ext' => '.lzp'
+			'nameHash' => 'md5', 
+			'ext' => '.lzp',
+			'useNewNameSystem' => false,
+			'useLZF' => false
 		);
 
 		if(is_array($config))
@@ -166,8 +171,8 @@ class Cache{
      * @return mixed
      */
 	public function Exists($names, $version=null){
-		$version = $this->GetVersion($version);
-		$path = $this->cfg['dir'].$version;
+		$path = $this->cfg['dir'];
+		$path .= $this->GetVersion($version);
 
 		if(is_array($names)){
 			$exists = array();
@@ -186,16 +191,23 @@ class Cache{
 		return $exists;
 	}
 
-	##########
-	# CREATE #
-	##########
+    /**
+     * Cria o(s) cache(s)
+     * 
+     * @param array $names Nomes dos caches a serem criados
+     * @param boolean $expire Opcional Tempo para o cache expirar
+     * @param null|float|int|string $version Opcional Versão dos caches a serem criados
+     * @return array
+     */
 	public function Create($datas, $expire=null, $version=null){
-		$version = $this->GetVersion($version);
-		$path = $this->cfg['dir'].$version;
+		$path = $this->cfg['dir'];
+		$path .= $this->GetVersion($version);
 
 		$compress = $this->cfg['compress'];
 		$expire = !is_null($expire) ? $expire : $this->cfg['expire'];
-		$expire = $expire==0 ? 0 : (time() + $expire);
+
+		if($expire!=0)
+			$expire += time();
 
 		if(!is_dir($path))
 			mkdir($path, 0777, true);
@@ -207,7 +219,7 @@ class Cache{
 
 			$cacheData = array(
 				'compress' => $compress,
-				'expire' => $expire,
+				'expire' => (int)$expire,
 				'data' => ($compress > 0) ? $this->Compress($data, $compress) : $data
 			);
 
@@ -230,19 +242,14 @@ class Cache{
      * @return mixed
      */
 	public function Get($names, $expired=false, $version=null){
-		$dir = $this->cfg['dir'];
-		$version = $this->GetVersion($version);
-		$ext = $this->cfg['ext'];
-		$path = $dir.$version;
-
-		if(!is_readable($dir))
-			die('Direrório não diponível ou sem permissão para leitura');
+		$path  = $this->cfg['dir'];
+		$path .= $this->GetVersion($version);
 
 		if(is_array($names)){
 			$data = array();
 			foreach($names as $name){
 				$name = $this->Name($name);
-				$cache = $this->Open($path.$name.$ext);
+				$cache = $this->Open($path.$name.$this->cfg['ext']);
 
 				if($cache['expire'] == 0 || time() < $cache['expire'] || $expired){
 					$cacheData = $cache['data'];
@@ -250,8 +257,8 @@ class Cache{
 				}
 			}
 		}else{
-			$name = $this->Name($names);
-			$cache = $this->Open($path.$name.$ext);
+			$path .= $this->Name($names);
+			$cache = $this->Open($path.$this->cfg['ext']);
 
 			if($cache['expire'] == 0 || time() < $cache['expire'] || $expired){
 				$data = $cache['data'];
@@ -277,8 +284,8 @@ class Cache{
 		if(!is_writeable($this->cfg['dir']))
 			die('Direrório não diponível ou sem permissão para escrita');
 
-		$version = $this->GetVersion($version);
-		$path = $dir.$version;
+		$path = $this->cfg['dir'];
+		$path .= $this->GetVersion($version);
 
 		$del = array();
 		foreach($names as $name){
@@ -301,7 +308,7 @@ class Cache{
      */
 	public function Clear($version=null){
 		if(!is_writeable($this->cfg['dir']))
-			return;
+			die('Direrório não diponível ou sem permissão para escrita');
 
 		$del = array();
 
@@ -320,18 +327,21 @@ class Cache{
 	 * @param null|float|int|string $version Opcional Versão dos caches a serem lidos
      * @return null|string
      */
-	public function Size($dir=null, $version=null){
-		$dir = !is_null($dir) ? $dir : $this->cfg['dir'];
-		$dir .= $this->GetVersion($version);
+	public function Size($version=null){
+		$path = !is_null($this->tempFileSize) ? $this->tempFileSize : $this->cfg['dir'];
+		$path .= $this->GetVersion($version);
 
-		if(!is_readable($dir))
+		if(!is_readable($path))
 			die('Direrório não diponível ou sem permissão para leitura');
 
 		$size = 0;
-		$files = glob(rtrim($dir, '/').'/*', GLOB_NOSORT);
+		$files = glob(rtrim($path, '/').'/*', GLOB_NOSORT);
 		foreach($files as $file){
-			$size += is_file($file) ? filesize($file) : $this->Size($file, $version);
+			$this->tempFileSize = $file;
+			$size += is_file($file) ? filesize($file) : $this->Size($version);
 		}
+
+		$this->tempFileSize = null;
 
 		$extSize = [' B', ' KB', ' MB', ' GB', ' TB', ' PB', ' EB', ' ZB', ' YB'];
 
@@ -384,10 +394,23 @@ class Cache{
 	private function Name($name){
 		$name = strtolower($name);
 		$name = $this->Filter($name);
-		$newName = str_ireplace('%name%', $name, $this->cfg['cacheNameCfg']['prefix']);
-		$newName .= hash($this->cfg['cacheNameCfg']['hash'], $name);
+		return $this->GenerateName($name, $this->cfg['useNewNameSystem']);
+	}
 
-		return $newName;
+    /**
+     * Novo sistema de nome para o cache
+     * 
+     * @param string $name Nome do cache.
+     * @return string
+     */
+	private function GenerateName($name, $newSystem){
+		if($newSystem){
+			$newName 	= hash('adler32', $name);
+			$nameHash 	= hash($this->cfg['nameHash'], $newName.'--'.$name);
+			return $newName.substr($nameHash, 0, 14).hash('crc32b', $nameHash);
+		}else{
+			return hash($this->cfg['nameHash'], $name);
+		}
 	}
 
     /**
@@ -423,7 +446,12 @@ class Cache{
      */
 	private function Compress($data, $compressLevel){
 		$data = $this->Encode($data);
-		return function_exists('gzdeflate') ? gzdeflate($data, $compressLevel) : $data;
+		if($this->cfg['useBZ'])
+			return function_exists('bzcompress') ? bzcompress($data, $compressLv) : $data;
+		elseif($this->cfg['useLZF'])
+			return function_exists('lzf_compress') ? lzf_compress($data) : $data;
+		else
+			return function_exists('gzdeflate') ? gzdeflate($data, $compressLv) : $data;
 	}
 
     /**
@@ -434,7 +462,12 @@ class Cache{
      */
 	private function Uncompress($data){
 		$data = $this->Decode($data);
-		return function_exists('gzinflate') ? gzinflate($data) : $data;
+		if($this->cfg['useBZ'])
+			return function_exists('bzdecompress') ? bzdecompress($data, $compressLv) : $data;
+		elseif($this->cfg['useLZF'])
+			return function_exists('lzf_decompress') ? lzf_decompress($data) : $data
+		else
+			return function_exists('gzinflate') ? gzinflate($data) : $data;
 	}
 
     /**
@@ -445,6 +478,6 @@ class Cache{
      */
 	private function GetVersion($version){
 		$version = !is_null($version) ? $version : $this->cfg['version'];
-		return !is_null($version) ? $this->Filter($version) : '';
+		return !is_null($version) ? $this->Filter($version).self::DS : '';
 	}
 }
