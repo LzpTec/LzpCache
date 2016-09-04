@@ -34,7 +34,7 @@
 *
 * Configurar:
 *	//Configurações
-*		$config = array('dir', 'expire', 'version', 'compress', 'nameHash', 'ext', 'useNewNameSystem');
+*		$config = array('dir', 'expire', 'version', 'compress', 'nameHash', 'ext', 'useNewNameSystem', 'useLZF', 'useBZ');
 *	//Parametros( = Padrão):
 *		$config['dir'] = __DIR__.'/cache/'; 				//Caminho do Diretório onde o cache será armazenado
 *		$config['expire'] = 600;							//0 para infinito - Valor Aceito int(opcional)
@@ -138,7 +138,8 @@ class Cache{
 			'nameHash' => 'md5', 
 			'ext' => '.lzp',
 			'useNewNameSystem' => false,
-			'useLZF' => false
+			'useLZF' => false,
+			'useBZ' => false
 		);
 
 		if(is_array($config))

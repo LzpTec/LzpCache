@@ -1,7 +1,10 @@
 # LzpCache Changelog
 
 ## Versão Atual
-2.0.2 - 03/09/2016
+2.0.3 - 03/09/2016
+
+## V 2.0.3
+-Corrigida a opção de compressão Bzip2
 
 ## V 2.0.2
 -Novas opções de compressão(Lzf e Bzip2)
