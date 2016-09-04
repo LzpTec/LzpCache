@@ -4,7 +4,7 @@
 ## Versão Atual
 2.0.3 - 03/09/2016
 
-**LzpCache V2** os caches das versões anteriores não vão funcionar na nova versão
+**LzpCache V2** os caches das versões anteriores não funcionam na nova versão
 
 ## Recursos
 - Compressão do cache

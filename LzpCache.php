@@ -466,7 +466,7 @@ class Cache{
 		if($this->cfg['useBZ'])
 			return function_exists('bzdecompress') ? bzdecompress($data, $compressLv) : $data;
 		elseif($this->cfg['useLZF'])
-			return function_exists('lzf_decompress') ? lzf_decompress($data) : $data
+			return function_exists('lzf_decompress') ? lzf_decompress($data) : $data;
 		else
 			return function_exists('gzinflate') ? gzinflate($data) : $data;
 	}
