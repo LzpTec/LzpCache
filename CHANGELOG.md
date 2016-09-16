@@ -1,20 +1,28 @@
 # LzpCache Changelog
 
 ## Versão Atual
-2.0.3 - 03/09/2016
+2.1.0 - 16/09/2016
 
-## V 2.0.3
+## V2.1.0
+-Novo Sistema de nome(Não funciona com a v2.0)
+-Nomes agora são case-sensitive
+-Performance Otimizada
+-Removida a configuração useNewNameSystem
+-Alguns bug's corrigidos
+-Hash padrão trocada para SHA1
+
+## V2.0.3
 -Corrigida a opção de compressão Bzip2
 
-## V 2.0.2
+## V2.0.2
 -Novas opções de compressão(Lzf e Bzip2)
 
-## V 2.0.1
+## V2.0.1
 -Removida a configuração cacheNameCfg
 
 -Nova configuração nameHash
 
--Novo Sistema de nome
+-Novo Sistema de nome(BETA) - configuração useNewNameSystem
 
 -Performance Otimizada
 
@@ -26,7 +34,7 @@
 
 -Corrigido bug na função delete
 
-## V 2.0.0
+## V2.0.0
 -Novo parametro para Create($expire)
 
 -Função Delete e Create modificada
@@ -67,7 +75,7 @@
 
 -Removido changelog do código
 
-## V 1.3.0
+## V1.3.0
 -Performance Otimizada
 
 -Documentação atualizada
@@ -90,12 +98,12 @@
 
 -Extensão padrão modificada para(.lzp)
 
-## V 1.2.1
+## V1.2.1
 -Argumento opcional adicionado nas Configurações('version')
 
 -Performance Otimizada
 
-## V 1.2.0
+## V1.2.0
 -Documentação atualizada
 
 -Performance Otimizada
@@ -104,7 +112,7 @@
 
 -Modificado new Lozep\LzpCache -> new Lzp\Cache
 
-## V 1.1.1
+## V1.1.1
 -Performance Otimizada
 
 -Melhora na Organização do código
@@ -124,7 +132,7 @@ CreateMultiples -> Retorna um array($nomecache=>$foiCriado)
 Delete -> Retorna true(sucesso), false(falha) ou null(não existe)
 
 
-## V 1.1.0
+## V1.1.0
 -Novo argumento opcional($cacheVersion)
 
 -Melhor documentação
@@ -133,5 +141,5 @@ Delete -> Retorna true(sucesso), false(falha) ou null(não existe)
 
 -Nova função(cacheDirSize)
 
-## V 1.0.0
+## V1.0.0
 -Lançamento do código para uso livre(MIT License)
