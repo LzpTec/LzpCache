@@ -262,8 +262,8 @@ class Cache{
 			return $data;
 		}
 
-		$path .= implode(self::DS, $this->Name($names));
-		$cache = $this->Open($path.$this->cfg['ext']);
+		$names = $this->Name($names);
+		$cache = $this->Open($path.implode(self::DS, $names).$this->cfg['ext']);
 
 		if($cache['expire'] == 0 || time() < $cache['expire'] || $expired){
 			$data = $cache['data'];
@@ -291,8 +291,8 @@ class Cache{
 
 		$del = array();
 		foreach($names as $name){
-			$newName = implode(self::DS, $this->Name($names));
-			$file = $path.$newName.$this->cfg['ext'];
+			$newName = $this->Name($names);
+			$file = $path.implode(self::DS, $newName).$this->cfg['ext'];
 			$del[$name] = is_file($file) ? @unlink($file) : null;
 		}
 		return $del;
