@@ -2,7 +2,7 @@
 **LzpCache** é uma classe para cache.
 
 ## Versão Atual
-1.4.0 - 01/09/2016(Última atualização da versão 1.X)
+1.4.1 - 22/09/2016
 
 
 ## Recursos
@@ -34,11 +34,10 @@ Para Configurar:
 	//Parametros( = Padrão):
 		$config['dir'] = __DIR__.'/cache/'; 										//Caminho do Diretório onde o cache será armazenado
 		$config['expire'] = 600; 													//0 para infinito - Valor Aceito int(opcional)
-		$config['version'] = false; 												//false ou 0 desativam - Valores Aceitos float, string e int(opcional)
+		$config['version'] = null; 													//null desativa - Valores Aceitos float, string e int(opcional)
 		$config['compress'] = 0;													//0 desativa - Valor Aceito int de 0 a 9(opcional)
 		$config['cacheNameType'] = array('hash' => 'md5', 'prefix' => '%name%_'); 	//Use %name% para colocar o nome do cache no prefixo(opcional)
 		$config['ext'] = '.lzp'; 													//Extensão do arquivo de cache(opcional)
-		$config['crypt'] = false; 													//false desativa, adicione uma Chave de 64 digitos hexadecimal para ativar
 	//Aplicar Configuração:
 		$cache->Config($config);
 ```
@@ -128,7 +127,7 @@ Para verificar se vários caches existem:
 
 Para verificar o tamanho do diretório de cache:
 ```php
-	$cache->DirSize($dir, $version);
+	$cache->DirSize($dir, $cacheVersion);
 	//Parametros( = Padrão):
 		$dir = null;								//Diretório a ser verificado(opcional)	
 		$cacheVersion = false; 						//Retorna o tamanho do cache de uma certa versão - Valores Aceitos float, string e int(opcional)

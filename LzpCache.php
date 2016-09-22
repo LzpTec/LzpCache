@@ -1,6 +1,6 @@
 <?php
 /**
- * LzpCache v1.4.0 - Requer PHP >= 5.5
+ * LzpCache v1.4.1 - Requer PHP >= 5.5
  *
  * @author André Posso <andre.posso@lzptec.com>
  * @copyright 2016 Lzp Tec
@@ -38,11 +38,10 @@
 *	//Parametros( = Padrão):
 *		$config['dir'] = __DIR__.'/cache/'; 										//Caminho do Diretório onde o cache será armazenado
 *		$config['expire'] = 600; 													//0 para infinito - Valor Aceito int(opcional)
-*		$config['version'] = false; 												//false ou 0 desativam - Valores Aceitos float, string e int(opcional)
+*		$config['version'] = null; 													//null desativa - Valores Aceitos float, string e int(opcional)
 *		$config['compress'] = 0;													//0 desativa - Valor Aceito int de 0 a 9(opcional)
 *		$config['cacheNameType'] = array('hash' => 'md5', 'prefix' => '%name%_'); 	//Use %name% para colocar o nome do cache no prefixo(opcional)
 *		$config['ext'] = '.lzp'; 													//Extensão do arquivo de cache(opcional)
-*		$config['crypt'] = false; 													//false desativa, adicione uma Chave de 64 digitos hexadecimal para ativar
 *	//Aplicar Configuração:
 *		$cache->Config($config);
 *
@@ -120,54 +119,6 @@
 *
 *
 *
-*** ChangeLog ***
-#####################################################################
-# V 1.4.0															#
-# -Criptografia do cache final adicionada(Consome desempenho)		#
-#####################################################################
-# V 1.3.0															#
-# -Performance Otimizada											#
-# -Documentação atualizada											#
-# -Criptografia do cache											#
-# -Modificado CacheDirSize -> DirSize								#
-# -Bugs na função DirSize corrigidos								#
-# -Novo parametro para ExistsMultiples($version)					#
-# -Novo parametro para CreateMultiples($version)					#
-# -Novo parametro para GetMultiples($version)						#
-# -Novo parametro para DeleteMultiples($version)					#
-# -Novo parametro para DirSize($version)							#
-# -Extensão padrão modificada para(.lzp)							#
-#####################################################################
-# V 1.2.1															#
-# -Argumento opcional adicionado nas Configurações('version')		#
-# -Performance Otimizada											#
-#####################################################################
-# V 1.2.0															#
-# -Documentação atualizada											#
-# -Performance Otimizada											#
-# -Modificado LzpCache -> Cache e Lozep -> Lzp						#
-# -Modificado new Lozep\LzpCache -> new Lzp\Cache					#
-#####################################################################
-# V 1.1.1															#
-# -Performance Otimizada											#
-# -Melhor Organização do código										#
-# -Melhor documentação												#
-# -Novo parametro para DeleteAll($version)							#
-# -Novo parametro para Create($config)								#
-# -Modificação nas funções(veja mais nos exemplos):					#
-# DeleteMultiples -> Retorna um array($nomecache=>$foiDeletado)		#
-# CreateMultiples -> Retorna um array($nomecache=>$foiCriado)		#
-# Delete -> Retorna true(sucesso), false(falha) ou null(não existe)	#
-#####################################################################
-# V 1.1.0															#
-# -Novo argumento opcional($cacheVersion)							#
-# -Melhor documentação												#
-# -Performance Otimizada											#
-# -Nova função(cacheDirSize)										#
-#####################################################################
-# V 1.0.0															#
-# -Lançamento do código para uso livre(MIT License)					#
-#####################################################################
 */
 class Cache{
 	#######
@@ -179,7 +130,7 @@ class Cache{
 	# CONSTRUCT #
 	#############
 	function __construct($config = false){
-		$configDefault = array('dir' => __DIR__.'/cache/', 'expire' => 600, 'version' => false, 'compress' => 0, 'cacheNameType' => array('hash' => 'md5', 'prefix' => '%name%_'), 'ext' => '.lzp', 'crypt' => false);
+		$configDefault = array('dir' => __DIR__.'/cache/', 'expire' => 600, 'version' => null, 'compress' => 0, 'cacheNameType' => array('hash' => 'md5', 'prefix' => '%name%_'), 'ext' => '.lzp');
 		if(is_array($config))$this->cfg = array_replace($configDefault, $config);
 		if(!is_dir($this->cfg['dir']))mkdir($this->cfg['dir'], 0755, true);
 	}
@@ -189,14 +140,12 @@ class Cache{
 	#################################################
 	public  function Config($config){if(is_array($config)){$this->cfg = array_replace($this->cfg, $config);if(!is_dir($this->cfg['dir']))mkdir($this->cfg['dir'], 0755, true);}}
 	private function Filter($name){return preg_replace("/[^a-zA-Z0-9_.-]/", "", $name);}
-	private function Name($name){$name = strtolower($name);$name = $this->Filter($name);$name = is_array($this->cfg['cacheNameType'])?str_ireplace('%name%', $name, $this->cfg['cacheNameType']['prefix']).hash($this->cfg['cacheNameType']['hash'], $name):false;return $name;}
+	private function Name($name){$name = strtolower($name);$name = $this->Filter($name);$name = is_array($this->cfg['cacheNameType'])?str_replace('%name%', $name, $this->cfg['cacheNameType']['prefix']).hash($this->cfg['cacheNameType']['hash'], $name):false;return $name;}
     private function Encode($data){return (is_array($data) || is_object($data))?serialize($data):$data;}
     private function Decode($data){$x = @unserialize($data);return ($x === 'b:0;' || $x !== false)?$x:$data;}
-	private function Compress($data, $compress){return (function_exists('gzdeflate') && function_exists('gzinflate'))?gzdeflate($data, $compress):$data;}
-	private function Uncompress($data){return (function_exists('gzinflate'))?gzinflate($data):$data;}
-	private function GetVersion($version){return (!empty($version))?$this->Filter($version):(!empty($this->cfg['version']))?$this->Filter($this->cfg['version']):'';}
-	private function Encrypt($encrypt){$encrypt=serialize($encrypt);$iv=mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_TWOFISH,MCRYPT_MODE_CBC),MCRYPT_DEV_URANDOM);$key=pack('H*',$this->cfg['cryptkey']);$mac=hash_hmac('sha256',$encrypt,substr(bin2hex($key),-32));$passcrypt=mcrypt_encrypt(MCRYPT_TWOFISH,$key,$encrypt.$mac,MCRYPT_MODE_CBC,$iv);$encoded=base64_encode($passcrypt).'!'.base64_encode($iv);return  $encoded;}
-	private function Decrypt($decrypt){$decrypt=explode('!',$decrypt.'!');$decoded=base64_decode($decrypt[0]);$iv=base64_decode($decrypt[1]);if(strlen($iv)!==mcrypt_get_iv_size(MCRYPT_TWOFISH,MCRYPT_MODE_CBC))return false;$key=pack('H*',$this->cfg['cryptkey']);$decrypted=trim(mcrypt_decrypt(MCRYPT_TWOFISH,$key,$decoded,MCRYPT_MODE_CBC, $iv));$mac=substr($decrypted,-64);$decrypted=substr($decrypted,0,-64);$calcmac=hash_hmac('sha256',$decrypted,substr(bin2hex($key), -32));if($calcmac!==$mac)return false;return unserialize($decrypted);}
+	private function Compress($data, $compress){return function_exists('gzdeflate') ? gzdeflate($data, $compress) : $data;}
+	private function Uncompress($data){return function_exists('gzinflate') ? gzinflate($data) : $data;}
+	private function GetVersion($version){return strlen($version) > 0 ? $this->Filter($version) : strlen($this->cfg['version']) > 0 ? $this->Filter($this->cfg['version']) : '';}
 
 	##########
 	# EXISTS #
@@ -228,12 +177,6 @@ class Cache{
 		$version = $this->GetVersion($version);
 		$path = $this->cfg['dir'].$version;
 
-		$crypt = false;
-		if($this->cfg['crypt']!==false && ctype_xdigit($this->cfg['crypt']) && isset($this->cfg['crypt'][63])){
-			$data = $this->Encrypt($data);
-			$crypt = true;
-		}
-
 		$expire = isset($config['expire'])?$config['expire']:$this->cfg['expire'];
 		$expire = ($expire!=0)?(time() + (Int)$expire):0;
 		$compress = isset($config['compress'])?$config['compress']:$this->cfg['compress'];
@@ -242,7 +185,6 @@ class Cache{
 		$cacheData = array(
 			'compress' => $compress,
 			'expire' => $expire,
-			'crypt' => $crypt,
 			'data' => ($compress > 0)?$this->Compress($data, $compress):$data
 		);
 
@@ -293,9 +235,6 @@ class Cache{
 				$data = $cacheData['data'];
 				$data = ($cacheData['compress'] > 0)?$this->Uncompress($data):$data;
 				$data = $this->Decode($data);
-				
-				if(isset($cacheData['crypt']) && ctype_xdigit($this->cfg['crypt']) && isset($this->cfg['crypt'][63]))
-					$data = $this->Decrypt($data);
 
 				return $data;
 			}
