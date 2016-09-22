@@ -42,8 +42,7 @@
 *		$config['compress'] = 0;				//0 desativa - Valor Aceito int de 0 a 9(opcional)
 *		$config['nameHash'] = 'md5'				//Hash para gerar o nome do cache(opcional)
 *		$config['ext'] = '.lzp'; 				//Extensão do arquivo de cache(opcional)
-*		$config['useLZF'] = false; 				//Substui a compressão Gzip pela compressão Lzf
-*		$config['useBZ'] = false; 				//Substui a compressão Gzip pela compressão Bzip2
+*		$config['compressType'] = 'gz'; 		//Compressão do cache - suportado: gz, lzf e bz
 *	//Aplicar Configuração:
 *		$cache->Config($config);
 *
@@ -131,25 +130,21 @@ class Cache{
     /**
      * Inicia junto com a classe
      * 
-     * @param array $config Array Opcional contendo configurações para o cache.
+     * @param array $options Array Opcional contendo configurações para o cache.
      * @return void
      */
-	function __construct($config = null){
-		$defaultConfig = array(
+	function __construct($options = null){
+		$defaults = array(
 			'dir' => (__DIR__).self::DS.'cache'.self::DS, 
 			'expire' => 600, 
 			'compress' => 0, 
 			'version' => null, 
 			'nameHash' => 'sha1', 
 			'ext' => '.lzp',
-			'useLZF' => false,
-			'useBZ' => false
+			'compressType' => 'gz'
 		);
 
-		if(is_array($config))
-			$this->cfg = array_replace($defaultConfig, $config);
-		else
-			$this->cfg = $defaultConfig;
+		$this->cfg = is_array($options) ? array_replace($defaults, $options) : $defaultConfig;
 
 		$this->CreateDir($this->cfg['dir']);
 	}
@@ -157,11 +152,11 @@ class Cache{
     /**
      * Configura a classe
      * 
-     * @param array $config Array contendo configurações para o cache.
+     * @param array $options Array contendo configurações para o cache.
      * @return void
      */
-	public function Config($config){
-		$this->cfg = array_replace($this->cfg, $config);
+	public function Config($options){
+		$this->cfg = array_replace($this->cfg, $options);
 
 		$this->CreateDir($this->cfg['dir']);
 	}
@@ -182,12 +177,14 @@ class Cache{
 
 			foreach($names as $name){
 				$newName = $this->Name($name);
-				$file = $path.implode(self::DS, $newName).$this->cfg['ext'];
+				$newName = implode(self::DS, $newName);
+				$file = $path.$newName.$this->cfg['ext'];
 				$exists[$name] = is_file($file);
 			}
 		}else{
 			$name = $this->Name($names);
-			$file = $path.implode(self::DS, $name).$this->cfg['ext'];
+			$name = implode(self::DS, $name);
+			$file = $path.$name.$this->cfg['ext'];
 			$exists = is_file($file);
 		}
 
@@ -221,11 +218,11 @@ class Cache{
 			$this->CreateDir($path);
 
 			$cacheData = array(
-				'compress' => $compress,
+				'compress' => ($compress > 0) ? $compress.'|'.$this->cfg['compressType'] : null,
 				'expire' => (int)$expire,
 				'data' => ($compress > 0) ? $this->Compress($data, $compress) : $data
 			);
-
+ 
 			$complete[$name] = $this->Write($path.$newName[1].$this->cfg['ext'], $cacheData);
 		}
 
@@ -252,22 +249,26 @@ class Cache{
 			$data = array();
 			foreach($names as $name){
 				$newName = $this->Name($name);
-				$cache = $this->Open($path.implode(self::DS, $newName).$this->cfg['ext']);
+				$newName = implode(self::DS, $newName);
+				$cache = $this->Open($path.$newName.$this->cfg['ext']);
 
 				if($cache['expire'] == 0 || time() < $cache['expire'] || $expired){
 					$cacheData = $cache['data'];
-					$data[$name] = ($cache['compress'] > 0) ? $this->Uncompress($cacheData) : $cacheData;
+					$compress = explode('|', $cache['compress']);
+					$data[$name] = ($compress[0] > 0) ? $this->Uncompress($cacheData, $compress[1]) : $cacheData;
 				}
 			}
 			return $data;
 		}
 
-		$path .= implode(self::DS, $this->Name($names));
-		$cache = $this->Open($path.$this->cfg['ext']);
+		$names = $this->Name($names);
+		$names = implode(self::DS, $names);
+		$cache = $this->Open($path.$names.$this->cfg['ext']);
 
 		if($cache['expire'] == 0 || time() < $cache['expire'] || $expired){
 			$data = $cache['data'];
-			return ($cache['compress'] > 0) ? $this->Uncompress($data) : $data;
+			$compress = explode('|', $cache['compress']);
+			return ($compress[0] > 0) ? $this->Uncompress($data, $compress[1]) : $data;
 		}
 	}
 
@@ -291,7 +292,8 @@ class Cache{
 
 		$del = array();
 		foreach($names as $name){
-			$newName = implode(self::DS, $this->Name($names));
+			$newName = $this->Name($names);
+			$newName = implode(self::DS, $newName);
 			$file = $path.$newName.$this->cfg['ext'];
 			$del[$name] = is_file($file) ? @unlink($file) : null;
 		}
@@ -390,7 +392,7 @@ class Cache{
      * Retorna o nome final do cache
      * 
      * @param string $name Nome do cache.
-     * @return string
+     * @return array
      */
 	private function Name($name, $size=18){
 		$name = $this->Filter($name);
@@ -483,12 +485,15 @@ class Cache{
      */
 	private function Compress($data, $compressLevel){
 		$data = $this->Encode($data);
-		if($this->cfg['useBZ'])
-			return function_exists('bzcompress') ? bzcompress($data, $compressLv) : $data;
-		elseif($this->cfg['useLZF'])
-			return function_exists('lzf_compress') ? lzf_compress($data) : $data;
-		else
-			return function_exists('gzdeflate') ? gzdeflate($data, $compressLv) : $data;
+
+		if($this->cfg['compressType'] == 'gz' && function_exists('gzdeflate'))
+			return gzdeflate($data, $compressLevel);
+		elseif($this->cfg['compressType'] == 'bz' && function_exists('bzcompress'))
+			return bzcompress($data, $compressLevel);
+		elseif($this->cfg['compressType'] == 'lzf' && function_exists('lzf_compress'))
+			return lzf_compress($data);
+
+		return $data;
 	}
 
     /**
@@ -497,14 +502,17 @@ class Cache{
      * @param string $data string que será descomprimida.
      * @return string
      */
-	private function Uncompress($data){
+	private function Uncompress($data, $type){
 		$data = $this->Decode($data);
-		if($this->cfg['useBZ'])
-			return function_exists('bzdecompress') ? bzdecompress($data, $compressLv) : $data;
-		elseif($this->cfg['useLZF'])
-			return function_exists('lzf_decompress') ? lzf_decompress($data) : $data;
-		else
-			return function_exists('gzinflate') ? gzinflate($data) : $data;
+
+		if($type == 'bz' && function_exists('bzdecompress'))
+			return bzdecompress($data);
+		elseif($type == 'lzf' && function_exists('lzf_decompress'))
+			return lzf_decompress($data);
+		elseif($type == 'gz' && function_exists('gzinflate'))
+			return gzinflate($data);
+
+		return $data;
 	}
 
     /**
