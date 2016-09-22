@@ -2,9 +2,11 @@
 **LzpCache** é uma classe escrita em php para cache.
 
 ## Versão Atual
-2.1.0 - 16/09/2016
+2.1.1 - 22/09/2016
 
 **LzpCache V2.1.0** os caches das versões anteriores não funcionam na nova versão
+
+**Atualização** recomendado apagar o cache a cada atualização do LzpCache
 
 ## Recursos
 - Compressão do cache
@@ -39,8 +41,7 @@ Para Configurar:
 	$config['compress'] = 0;				//0 desativa - Valor Aceito int de 0 a 9(opcional)
 	$config['nameHash'] = 'md5'				//Hash para gerar o nome do cache(opcional)
 	$config['ext'] = '.lzp'; 				//Extensão do arquivo de cache(opcional)
-	$config['useLZF'] = false; 				//Substui a compressão Gzip pela compressão Lzf
-	$config['useBZ'] = false; 				//Substui a compressão Gzip pela compressão Bzip2
+	$config['compressType'] = 'gz'; 		//Compressão do cache - suportado: gz, lzf e bz
 //Aplicar Configuração:
 	$cache->Config($config);
 ```

@@ -1,9 +1,9 @@
 # LzpCache Changelog
 
 ## Versão Atual
-2.1.0 - 16/09/2016
+2.1.1 - 22/09/2016
 
-## DEV
+## V2.1.1
 -Corrigidos bugs nas funções de compressão e descompressão
 
 -Compressão melhorada
@@ -11,6 +11,8 @@
 -Melhorias no código
 
 -Pequena melhoria na performance
+
+-Nova opção para configurar a compressão(compressType)
 
 ## V2.1.0
 -Novo Sistema de nome(Não funciona com a v2.0)
