@@ -222,8 +222,7 @@ class Cache{
 				'expire' => (int)$expire,
 				'data' => ($compress > 0) ? $this->Compress($data, $compress) : $data
 			);
-
-			return $cacheData; 
+ 
 			$complete[$name] = $this->Write($path.$newName[1].$this->cfg['ext'], $cacheData);
 		}
 
