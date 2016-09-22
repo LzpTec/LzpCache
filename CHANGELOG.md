@@ -5,16 +5,24 @@
 
 ## DEV
 -Corrigidos bugs nas funções de compressão e descompressão
+
 -Compressão melhorada
+
 -Melhorias no código
+
 -Pequena melhoria na performance
 
 ## V2.1.0
 -Novo Sistema de nome(Não funciona com a v2.0)
+
 -Nomes agora são case-sensitive
+
 -Performance Otimizada
+
 -Removida a configuração useNewNameSystem
+
 -Alguns bug's corrigidos
+
 -Hash padrão trocada para SHA1
 
 ## V2.0.3
