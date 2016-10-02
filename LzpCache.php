@@ -1,6 +1,6 @@
 <?php
 /**
- * LzpCache v2.1.0 - Requer PHP >= 5.5
+ * LzpCache v2.1.2 - Requer PHP >= 5.5
  *
  * @author André Posso <andre.posso@lzptec.com>
  * @copyright 2016 Lzp Tec
@@ -133,7 +133,7 @@ class Cache{
      * @param array $options Array Opcional contendo configurações para o cache.
      * @return void
      */
-	function __construct($options = null){
+	public function __construct($options = null){
 		$defaults = array(
 			'dir' => (__DIR__).self::DS.'cache'.self::DS, 
 			'expire' => 600, 
@@ -144,8 +144,16 @@ class Cache{
 			'compressType' => 'gz'
 		);
 
-		$this->cfg = is_array($options) ? array_replace($defaults, $options) : $defaultConfig;
+		$newOptions = $defaults;
 
+		if(is_array($options)){
+			foreach($options as $k => $v){
+				if(array_key_exists($k, $newOptions))
+					$newOptions[$k] = $options[$k];
+			}
+		}
+
+		$this->cfg = $newOptions;
 		$this->CreateDir($this->cfg['dir']);
 	}
 
@@ -156,7 +164,16 @@ class Cache{
      * @return void
      */
 	public function Config($options){
-		$this->cfg = array_replace($this->cfg, $options);
+		$newOptions = $this->cfg;
+
+		if(is_array($options)){
+			foreach($options as $k => $v){
+				if(array_key_exists($k, $newOptions))
+					$newOptions[$k] = $options[$k];
+			}
+		}
+
+		$this->cfg = $newOptions;
 
 		$this->CreateDir($this->cfg['dir']);
 	}

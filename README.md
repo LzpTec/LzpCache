@@ -2,7 +2,7 @@
 **LzpCache** é uma classe escrita em php para cache.
 
 ## Versão Atual
-2.1.1 - 22/09/2016
+2.1.2 - 02/10/2016
 
 **LzpCache V2.1.0** os caches das versões anteriores não funcionam na nova versão
 
