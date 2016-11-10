@@ -37,7 +37,7 @@
 ## V2.0.3
 -Corrigida a opção de compressão Bzip2
 
-## V2.0.2
+## V2.0.2[YANKED]
 -Novas opções de compressão(Lzf e Bzip2)
 
 ## V2.0.1
