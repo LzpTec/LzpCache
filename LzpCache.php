@@ -1,6 +1,6 @@
 <?php
 	/**
-		* LzpCache v2.1.3 - Requires PHP >= 5.5
+		* LzpCache v2.1.3b - Requires PHP >= 5.5
 		*
 		* @author André Posso <admin@lzptec.com>
 		* @copyright 2017 Lzp Tec
@@ -36,7 +36,7 @@
 		{
 			//Array padrão
 			$default = array(
-			'dir' => (__DIR__).self::DS.'cache'.self::DS, 
+			'dir' => (__DIR__).'/cache/', 
 			'expire' => 600, 
 			'compress' => 0, 
 			'version' => null, 
@@ -45,7 +45,7 @@
 			'compressType' => 'gz'
 			);
 			
-			$newOptions = $defaults;
+			$newOptions = $default;
 			
 			if(is_array($options))
 			{

@@ -1,9 +1,12 @@
 # LzpCache Changelog
 
 ## Current version
-2.1.3 - 05/05/2017
+2.1.3b - 05/05/2017
 
-## V2.1.3
+## V2.1.3b
+-Bugs fixed
+
+## V2.1.3 [YANKED]
 -English Content
 
 -Code improvements
