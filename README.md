@@ -1,5 +1,5 @@
 # LzpCache
-**LzpCache** é uma classe escrita em php para cache.
+**LzpCache** Improves performance in php applications.
 
 ## Versão Atual
 2.1.3 - 05/05/2017
