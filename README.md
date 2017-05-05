@@ -49,9 +49,9 @@ To get a single cache:
 $cache->Get($cacheName, $getExpired, $version);
 $cache->Read($cacheName, $getExpired, $version);
 //Parameters( = default/demonstration):
-	$cacheName = 'cacheName'; 	// Cache Name (Required)
-	$getExpired = false;				//Ignore if cache has expired (Optional)
-	$version = null;					//Version of the cache to be obtained - Accepted values: float, string and int (Optional)
+	$cacheName = 'cacheName';		// Cache Name (Required)
+	$getExpired = false;		//Ignore if cache has expired (Optional)
+	$version = null;		//Version of the cache to be obtained - Accepted values: float, string and int (Optional)
 ```
 
 To get multiple caches:
@@ -59,56 +59,56 @@ To get multiple caches:
 $cache->Get($cachesNames, $getExpired, $version);		//Returns an array($cacheName=>$value)
 $cache->Read($cachesNames, $getExpired, $version);
 //Parameters( = default/demonstration):
-	$cachesNames = array('cacheName00', ...);				//Array containing the Name of each cache (Required)
-	$getExpired = false;												//Ignore if cache has already expired (opcional)
-	$version = null;													//Version of the cache to be obtained - Accepted values: float, string and int (Optional)
+	$cachesNames = array('cacheName00', ...);		//Array containing the Name of each cache (Required)
+	$getExpired = false;		//Ignore if cache has already expired (opcional)
+	$version = null;		//Version of the cache to be obtained - Accepted values: float, string and int (Optional)
 ```
 
 To create one or more caches:
 ```php
-$cache->Create($namesAndValues, $expire, $version); 		//Returns true on success
-$cache->Set($namesAndValues, $expire, $version); 			//Returns true on success
+$cache->Create($namesAndValues, $expire, $version);		//Returns true on success
+$cache->Set($namesAndValues, $expire, $version);		//Returns true on success
 //Parameters( = default):
-	$namesAndValues = array('cacheName00' => $value); 	//Array containing the Names and values of the caches to create (Required)
-	$expire = 0;															//Cache time / 0 for infinity - Accepted value int (opcional)
-	$version = null;														//Version of the cache to be created - Accepted values: float, string and int (Optional)
+	$namesAndValues = array('cacheName00' => $value);		//Array containing the Names and values of the caches to create (Required)
+	$expire = 0;		//Cache time / 0 for infinity - Accepted value int (opcional)
+	$version = null;		//Version of the cache to be created - Accepted values: float, string and int (Optional)
 ```
 
 To delete one or more caches:
 ```php
-$cache->Delete($cachesNames, $version); 			//Returns an array($cacheName=>$itWasDeleted), $itWasDeleted = true, false(fail) or null(Cache does not exist)
+$cache->Delete($cachesNames, $version);		//Returns an array($cacheName=>$itWasDeleted), $itWasDeleted = true, false(fail) or null(Cache does not exist)
 $cache->Remove($cachesNames, $version);
 //Parameters( = default):
-	$cachesNames = array('cacheName00', ...); 		//Array containing the Name of each cache (Required)
-	$version = null; 											//Version of the cache to be deleted - Accepted values: float, string and int (Optional)
+	$cachesNames = array('cacheName00', ...);		//Array containing the Name of each cache (Required)
+	$version = null;		//Version of the cache to be deleted - Accepted values: float, string and int (Optional)
 ```
 
 To delete all caches:
 ```php
 $cache->Clear($version);		//Returns true if caches are deleted
 //Parameters( = default):
-	$version = null;				//Delete the caches of a certain version - Accepted values: float, string and int(Optional)
+	$version = null;		//Delete the caches of a certain version - Accepted values: float, string and int(Optional)
 ```
 
 To check if a cache exists:
 ```php
 $cache->Exists($cacheName, $version);		//Returns true if the cache exists
 //Parameters( = default):
-	$cacheName = 'cacheName';					//Cache Name(Required)
-	$version = null;									//Version to be checked - Accepted values: float, string and int (Opcional)
+	$cacheName = 'cacheName';		//Cache Name(Required)
+	$version = null;		//Version to be checked - Accepted values: float, string and int (Opcional)
 ```
 
 To check if multiple caches exist:
 ```php
-$cache->Exists($cachesNames, $version);			//Returns an array($cacheName=>$exists)
+$cache->Exists($cachesNames, $version);		//Returns an array($cacheName=>$exists)
 //Parameters( = default):
-	$cachesNames = array('cacheName00', ...); 		//Array contendo o Nome de cada cache (Required)
-	$version = null;											//Version to be checked - Accepted values: float, string and int (Opcional)
+	$cachesNames = array('cacheName00', ...);		//Array contendo o Nome de cada cache (Required)
+	$version = null;		//Version to be checked - Accepted values: float, string and int (Opcional)
 ```
 
 To check the cache directory size:
 ```php
 $cache->Size($version);		//Returns directory size or null(Empty directory)
 //Parameters( = default):
-	$version = null;				//Returns the cache size of a certain version - Accepted values: float, string and int (Opcional)
+	$version = null;		//Returns the cache size of a certain version - Accepted values: float, string and int (Opcional)
 ```
