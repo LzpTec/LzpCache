@@ -1,168 +1,175 @@
 # LzpCache Changelog
 
-## Versão Atual
-2.1.2 - 02/10/2016
+## Current version
+2.1.3 - 04/04/2017
+
+## V2.1.3
+-English Content
+
+-Code improvements
+
+-Documentation updated
+
+-Small performance improvement
 
 ## V2.1.2
--Corrigido bug na configuração
+-Fixed configuration bug
 
--Melhorias na configuração do cache
+-Cache configuration improvements
 
--Pequena melhoria na performance
+-Small performance improvement
 
 ## V2.1.1
--Corrigidos bugs nas funções de compressão e descompressão
+-Fixed bugs in compression and decompression functions
 
--Compressão melhorada
+-Enhanced compression
 
--Melhorias no código
+-Improved code
 
--Pequena melhoria na performance
+-Small performance improvement
 
--Nova opção para configurar a compressão(compressType)
+-New option to configure compression (compressType)
 
 ## V2.1.0
--Novo Sistema de nome(Não funciona com a v2.0)
+-New Name System (Does not work with v2.0)
 
--Nomes agora são case-sensitive
+-Names are now case-sensitive
 
--Performance Otimizada
+-Performance Optimized
 
--Removida a configuração useNewNameSystem
+-Removed the useNewNameSystem configuration
 
--Alguns bug's corrigidos
+-Bugs fixed
 
--Hash padrão trocada para SHA1
+-Hash pattern changed to SHA1
 
 ## V2.0.3
--Corrigida a opção de compressão Bzip2
+- Fixed the Bzip2 compression option
 
-## V2.0.2[YANKED]
--Novas opções de compressão(Lzf e Bzip2)
+## V2.0.2 [YANKED]
+-New compression options (Lzf and Bzip2)
 
 ## V2.0.1
--Removida a configuração cacheNameCfg
+-Removed the cacheNameCfg configuration
 
--Nova configuração nameHash
+-New nameHash setting
 
--Novo Sistema de nome(BETA) - configuração useNewNameSystem
+-New Name System (BETA) - useNewNameSystem configuration
 
--Performance Otimizada
+-Performance Optimized
 
--Melhorias na documentação
+-Improvements in documentation
 
--Removido argumento dir da função Size
+-Removed dir argument of Size function
 
--Corrigido um bug no sistema de versão do cache
+-Fixed a bug in the cache version system
 
--Corrigido bug na função delete
+-Fixed bug in delete function
 
 ## V2.0.0
--Novo parametro para Create($expire)
+-New parameter for Create ($expire)
 
--Função Delete e Create modificada
+-Modified Delete and Create Function
 
--Função DeleteAll renomeada para Clear
+-Function Delete All renamed to Clear
 
--Nova função Set(Mesma coisa que a Create)
+-New function: Set (Same thing as Create)
 
--Nova função Read(Mesma coisa que a Get)
+-New function: Read (Same thing as Get)
 
--Nova função Remove(Mesma coisa que a Delete)
+-New function: Remove (Same thing as Delete)
 
--Diretórios agora são criados com permissão 0777
+-Directories are now created with permission 0777
 
--Código Documentado
+-Documented Code
 
--Código Reescrito
+-Re-written code
 
--Performance Otimizada
+-Performance Optimized
 
--Documentação atualizada
+-Documentation updated
 
--Configuração cacheNameType renomeada para cacheNameCfg
+-CacheNameType setting renamed to cacheNameCfg
 
--Removido parametro da Create($config)
+-Removed Create($config) parameter
 
--Removida Criptografia do cache
+-Removed Cache Encryption
 
--Renomeado DirSize para Size
+-Remove DirSize for Size
 
--Função Unida ExistsMultiples -> Exists
+-United Function ExistsMultiples -> Exists
 
--Função Unida CreateMultiples -> Create
+-United Function CreateMultiples -> Create
 
--Função Unida GetMultiples -> Get
+-Function GetMultiples - Get
 
--Função Unida DeleteMultiples -> Delete
+-Unit DeleteMultiples -> Delete
 
--Removido changelog do código
+-Removed code changelog
 
 ## V1.3.0
--Performance Otimizada
+-Performance Optimized
 
--Documentação atualizada
+-Documentation updated
 
--Criptografia do cache(Consome desempenho - Necessário remover comentários do código)
+-Cache encryption (Consume performance - Need to remove comments from code)
 
--Modificado CacheDirSize -> DirSize
+-Function CacheDirSize renamed to DirSize
 
--Bugs na função DirSize corrigidos
+-Bugs in the DirSize function fixed
 
--Novo parâmetro para ExistsMultiples($version)
+-New parameter for ExistsMultiples ($version)
 
--Novo parâmetro para CreateMultiples($version)
+-New parameter for CreateMultiples ($version)
 
--Novo parâmetro para GetMultiples($version)
+-New parameter for GetMultiples ($version)
 
--Novo parâmetro para DeleteMultiples($version)
+-New parameter for DeleteMultiples ($version)
 
--Novo parâmetro para DirSize($version)
+-New parameter for DirSize ($version)
 
--Extensão padrão modificada para(.lzp)
+-Extended default extension for (.lzp)
 
 ## V1.2.1
--Argumento opcional adicionado nas Configurações('version')
+-Added argument added in Settings ('version')
 
--Performance Otimizada
+-Improved Performance
 
 ## V1.2.0
--Documentação atualizada
+-Documentation updated
 
--Performance Otimizada
+-Improved Performance
 
--Modificado LzpCache -> Cache e Lozep -> Lzp
-
--Modificado new Lozep\LzpCache -> new Lzp\Cache
+-Modified Lozep\LzpCache to Lzp\Cache
 
 ## V1.1.1
--Performance Otimizada
+-Performance Optimized
 
--Melhora na Organização do código
+-Improved Code Organization
 
--Melhora na documentação
+-Improved Documentation
 
--Novo parametro para DeleteAll($version)
+-New parameter for DeleteAll ($version)
 
--Novo parametro para Create($config)
+-New parameter for Create ($config)
 
--Modificação nas funções(veja mais nos exemplos):
+-Modification in functions (see more in the examples):
 
-DeleteMultiples -> Retorna um array($nomecache=>$foiDeletado)
+DeleteMultiples -> Returns an array ($cachename => [bool $has_been_deleted])
 
-CreateMultiples -> Retorna um array($nomecache=>$foiCriado)
+CreateMultiples -> Returns an array ($cachename => [bool $has_been_created])
 
-Delete -> Retorna true(sucesso), false(falha) ou null(não existe)
+Delete -> Returns true, false, or null(does not exist)
 
 
 ## V1.1.0
--Novo argumento opcional($cacheVersion)
+-New optional argument ($cacheVersion)
 
--Melhor documentação
+-Improved Documentation
 
--Performance Otimizada
+-Improved Performance
 
--Nova função(cacheDirSize)
+-New function (cacheDirSize)
 
 ## V1.0.0
--Lançamento do código para uso livre(MIT License)
+- Release of the code for free use (MIT License)
