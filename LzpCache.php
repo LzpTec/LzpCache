@@ -10,7 +10,7 @@
 	
 	class Cache
 	{
-		private const DS = DIRECTORY_SEPARATOR;
+		const DS = DIRECTORY_SEPARATOR;
 		
 		/**
 			* Array containing the settings.

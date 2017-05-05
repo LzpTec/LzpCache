@@ -33,13 +33,13 @@ To configure:
 //Settings
 	$config = array('dir', 'expire', 'version', 'compress', 'nameHash', 'ext', 'useLZF', 'useBZ');
 //Parameters( = default/demonstration):
-	$config['dir'] = __DIR__.'/cache/'; 	//Directory path where the cache will be stored
-	$config['expire'] = 600; 				//0 for infinity - Value Accepted int (Optional)
-	$config['version'] = null; 				//Null disables - Accepted values: float, string and int (Optional)
-	$config['compress'] = 0;				//0 disables - Accepted values: int from 0 to 9 (Optional)
-	$config['nameHash'] = 'sha1'			//Custom Hash to generate cache name (Optional)
-	$config['ext'] = '.lzp'; 					//Cache file extension (Optional)
-	$config['compressType'] = 'gz'; 		//Cache Compression - supported: gz, lzf, and bz (Optional)
+	$config['dir'] = __DIR__.'/cache/';		//Directory path where the cache will be stored
+	$config['expire'] = 600;		//0 for infinity - Value Accepted int (Optional)
+	$config['version'] = null;		//Null disables - Accepted values: float, string and int (Optional)
+	$config['compress'] = 0;		//0 disables - Accepted values: int from 0 to 9 (Optional)
+	$config['nameHash'] = 'sha1';		//Custom Hash to generate cache name (Optional)
+	$config['ext'] = '.lzp';		//Cache file extension (Optional)
+	$config['compressType'] = 'gz';		//Cache Compression - supported: gz, lzf, and bz (Optional)
 //Apply Settings:
 	$cache->Config($config);
 ```
