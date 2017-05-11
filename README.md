@@ -1,116 +1,114 @@
 # LzpCache
-**LzpCache** é uma classe escrita em php para cache.
+**LzpCache** Improves performance in php applications.
 
 ## Versão Atual
-2.0.2 - 03/09/2016
+2.1.3b - 05/05/2017
 
-**LzpCache V2** os caches das versões anteriores não vão funcionar na nova versão
+**LzpCache V2.1.0** Caches from previous versions do not work with new versions
 
-## Recursos
-- Compressão do cache
-- Nome personalizado para o cache/Hash de escolha do usuário
-- Extensão do arquivo cache personalizada
-- Criar/Obter/Deletar vários caches de uma vez
-- É possível obter um cache mesmo que ele tenha expirado
-- Compressão LZF e Bzip2
-
-
-## Recursos que talvez sejam introduzidos
-- Suporte para MemCache e MemCached.
+## Resources
+- Cache compression
+- Custom name for cache and user choice hash
+- Custom cache file extension
+- Create / Retrieve / Delete multiple caches at once
+- It is possible to get a cache even if it has expired
+- LZF and Bzip2 compression
 
 
-##  Como Usar
-Inicializar:
+## Resources that may be introduced
+-Support for MemCache and MemCached.
+
+
+## How to use
+Initialize:
 ```php
-//Sem configurações
-	$cache = new Lzp\Cache;
-//Com configurações
-	$cache = new Lzp\Cache($config);
+// With settings
+	$Cache = new Lzp\Cache($config);
+// Without settings
+	$Cache = new Lzp\Cache;
 ```
 
-Para Configurar:
+To configure:
 ```php
-//Configurações
-	$config = array('dir', 'expire', 'version', 'compress', 'nameHash', 'ext', 'useNewNameSystem', 'useLZF', 'useBZ');
-//Parametros( = Padrão):
-	$config['dir'] = __DIR__.'/cache/'; 				//Caminho do Diretório onde o cache será armazenado
-	$config['expire'] = 600; 							//0 para infinito - Valor Aceito int(opcional)
-	$config['version'] = null; 							//null desativa - Valores Aceitos float, string e int(opcional)
-	$config['compress'] = 0;							//0 desativa - Valor Aceito int de 0 a 9(opcional)
-	$config['nameHash'] = 'md5'							//Hash para gerar o nome do cache(opcional)
-	$config['ext'] = '.lzp'; 							//Extensão do arquivo de cache(opcional)
-	$config['useNewNameSystem'] = false; 				//Novo sistema de nome dos arquivos, nomes melhores e limitados a 30 caracteres
-	$config['useLZF'] = false; 							//Substui a compressão Gzip pela compressão Lzf
-	$config['useBZ'] = false; 							//Substui a compressão Gzip pela compressão Bzip2
-//Aplicar Configuração:
+//Settings
+	$config = array('dir', 'expire', 'version', 'compress', 'nameHash', 'ext', 'useLZF', 'useBZ');
+//Parameters( = default/demonstration):
+	$config['dir'] = __DIR__.'/cache/';		//Directory path where the cache will be stored
+	$config['expire'] = 600;		//0 for infinity - Value Accepted int (Optional)
+	$config['version'] = null;		//Null disables - Accepted values: float, string and int (Optional)
+	$config['compress'] = 0;		//0 disables - Accepted values: int from 0 to 9 (Optional)
+	$config['nameHash'] = 'sha1';		//Custom Hash to generate cache name (Optional)
+	$config['ext'] = '.lzp';		//Cache file extension (Optional)
+	$config['compressType'] = 'gz';		//Cache Compression - supported: gz, lzf, and bz (Optional)
+//Apply Settings:
 	$cache->Config($config);
 ```
 
-Para obter um único cache:
+To get a single cache:
 ```php
 $cache->Get($cacheName, $getExpired, $version);
 $cache->Read($cacheName, $getExpired, $version);
-//Parametros( = Padrão):
-	$cacheName = 'nome_do_cache'; 	//Nome do cache(Parametro obrigatório)
-	$getExpired = false;			//Ignora se o cache já expirou(opcional)
-	$version = null;				//Versão do cache a ser obtido - Valores Aceitos float, string e int(opcional)
+//Parameters( = default/demonstration):
+	$cacheName = 'cacheName';		// Cache Name (Required)
+	$getExpired = false;		//Ignore if cache has expired (Optional)
+	$version = null;		//Version of the cache to be obtained - Accepted values: float, string and int (Optional)
 ```
 
-Para obter múltiplos caches:
+To get multiple caches:
 ```php
-$cache->Get($cachesNames, $getExpired, $version);					//Retorna um array($nomeDoCache=>$valor)
+$cache->Get($cachesNames, $getExpired, $version);		//Returns an array($cacheName=>$value)
 $cache->Read($cachesNames, $getExpired, $version);
-//Parametros( = Padrão):
-	$cachesNames = array('nome_do_cache00', 'nome_do_cache01');		//Array contendo o Nome de cada cache(Parametro obrigatório)
-	$getExpired = false;											//Ignora se o cache já expirou(opcional)
-	$version = null;												//Versão do cache a ser obtido - Valores Aceitos float, string e int(opcional)
+//Parameters( = default/demonstration):
+	$cachesNames = array('cacheName00', ...);		//Array containing the Name of each cache (Required)
+	$getExpired = false;		//Ignore if cache has already expired (opcional)
+	$version = null;		//Version of the cache to be obtained - Accepted values: float, string and int (Optional)
 ```
 
-Para criar um ou mais caches:
+To create one or more caches:
 ```php
-$cache->Create($namesAndValues, $expire, $version); 			//Retorna true em caso de sucesso
-$cache->Set($namesAndValues, $expire, $version); 				//Retorna true em caso de sucesso
-//Parametros( = Padrão):
-	$namesAndValues = array('nome_do_cache00' => $value); 		//Array contendo os Nomes e os valores dos caches a serem criados(Parametro obrigatório)
-	$expire = 0;												//Tempo do cache / 0 para infinito - Valor Aceito int(opcional)
-	$version = null;											//Versão do cache a ser criado - Valores Aceitos(float, string, int) - (opcional)
+$cache->Create($namesAndValues, $expire, $version);		//Returns true on success
+$cache->Set($namesAndValues, $expire, $version);		//Returns true on success
+//Parameters( = default):
+	$namesAndValues = array('cacheName00' => $value);		//Array containing the Names and values of the caches to create (Required)
+	$expire = 0;		//Cache time / 0 for infinity - Accepted value int (opcional)
+	$version = null;		//Version of the cache to be created - Accepted values: float, string and int (Optional)
 ```
 
-Para deletar um ou mais caches:
+To delete one or more caches:
 ```php
-$cache->Delete($cachesNames, $version); 				//Retorna um array($nomecache=>$foiDeletado), $foiDeletado = true(sucesso), false(falha) ou null(cache não existe)
+$cache->Delete($cachesNames, $version);		//Returns an array($cacheName=>$itWasDeleted), $itWasDeleted = true, false(fail) or null(Cache does not exist)
 $cache->Remove($cachesNames, $version);
-//Parametros( = Padrão):
-	$cachesNames = array('nome_do_cache00', ...); 		//Array contendo o Nome de cada cache(Required)
-	$version = null; 									//Versão dos caches a serem deletados - Valores Aceitos float, string e int(Opcional)
+//Parameters( = default):
+	$cachesNames = array('cacheName00', ...);		//Array containing the Name of each cache (Required)
+	$version = null;		//Version of the cache to be deleted - Accepted values: float, string and int (Optional)
 ```
 
+To delete all caches:
 ```php
-Para deletar todos os caches:
-$cache->Clear($version); 			//Retorna true se os caches forem excluídos
-//Parametros( = Padrão):
-	$version = null; 				//Deleta os caches de uma certa versão - Valores Aceitos float, string e int(Parametro opicional)
+$cache->Clear($version);		//Returns true if caches are deleted
+//Parameters( = default):
+	$version = null;		//Delete the caches of a certain version - Accepted values: float, string and int(Optional)
 ```
 
-Para verificar se um cache existe:
+To check if a cache exists:
 ```php
-$cache->Exists($cacheName, $version);		//Retorna true se o cache existe
-//Parametros( = Padrão):
-	$cacheName = 'nome_do_cache'; 			//Nome do cache(Required)
-	$version = null; 						//Versão a ser verificada - Valores Aceitos float, string e int(Opcional)
+$cache->Exists($cacheName, $version);		//Returns true if the cache exists
+//Parameters( = default):
+	$cacheName = 'cacheName';		//Cache Name(Required)
+	$version = null;		//Version to be checked - Accepted values: float, string and int (Opcional)
 ```
 
-Para verificar se vários caches existem:
+To check if multiple caches exist:
 ```php
-$cache->Exists($cachesNames, $version);								//Retorna um array($nomecache=>$exists)
-//Parametros( = Padrão):
-	$cachesNames = array('nome_do_cache00', 'nome_do_cache01'); 	//Array contendo o Nome de cada cache(Required)
-	$version = null; 												//Versão a ser verificada - Valores Aceitos float, string e int(Opcional)
+$cache->Exists($cachesNames, $version);		//Returns an array($cacheName=>$exists)
+//Parameters( = default):
+	$cachesNames = array('cacheName00', ...);		//Array contendo o Nome de cada cache (Required)
+	$version = null;		//Version to be checked - Accepted values: float, string and int (Opcional)
 ```
 
-Para verificar o tamanho do diretório de cache:
+To check the cache directory size:
 ```php
-$cache->Size($version);			//Retorna tamanho do diretório ou null(diretório vazio)
-//Parametros( = Padrão):
-	$version = null; 			//Retorna o tamanho do cache de uma certa versão - Valores Aceitos float, string e int(Opcional)
+$cache->Size($version);		//Returns directory size or null(Empty directory)
+//Parameters( = default):
+	$version = null;		//Returns the cache size of a certain version - Accepted values: float, string and int (Opcional)
 ```

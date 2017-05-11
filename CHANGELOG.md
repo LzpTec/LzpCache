@@ -1,134 +1,178 @@
 # LzpCache Changelog
 
-## Versão Atual
-2.0.2 - 03/09/2016
+## Current version
+2.1.3b - 05/05/2017
 
-## V 2.0.2
--Novas opções de compressão(Lzf e Bzip2)
+## V2.1.3b
+-Bugs fixed
 
-## V 2.0.1
--Removida a configuração cacheNameCfg
+## V2.1.3 [YANKED]
+-English Content
 
--Nova configuração nameHash
+-Code improvements
 
--Novo Sistema de nome
+-Documentation updated
 
--Performance Otimizada
+-Small performance improvement
 
--Melhorias na documentação
+## V2.1.2
+-Fixed configuration bug
 
--Removido argumento dir da função Size
+-Cache configuration improvements
 
--Corrigido um bug no sistema de versão do cache
+-Small performance improvement
 
--Corrigido bug na função delete
+## V2.1.1
+-Fixed bugs in compression and decompression functions
 
-## V 2.0.0
--Novo parametro para Create($expire)
+-Enhanced compression
 
--Função Delete e Create modificada
+-Improved code
 
--Função DeleteAll renomeada para Clear
+-Small performance improvement
 
--Nova função Set(Mesma coisa que a Create)
+-New option to configure compression (compressType)
 
--Nova função Read(Mesma coisa que a Get)
+## V2.1.0
+-New Name System (Does not work with v2.0)
 
--Nova função Remove(Mesma coisa que a Delete)
+-Names are now case-sensitive
 
--Diretórios agora são criados com permissão 0777
+-Performance Optimized
 
--Código Documentado
+-Removed the useNewNameSystem configuration
 
--Código Reescrito
+-Bugs fixed
 
--Performance Otimizada
+-Hash pattern changed to SHA1
 
--Documentação atualizada
+## V2.0.3
+- Fixed the Bzip2 compression option
 
--Configuração cacheNameType renomeada para cacheNameCfg
+## V2.0.2 [YANKED]
+-New compression options (Lzf and Bzip2)
 
--Removido parametro da Create($config)
+## V2.0.1
+-Removed the cacheNameCfg configuration
 
--Removida Criptografia do cache
+-New nameHash setting
 
--Renomeado DirSize para Size
+-New Name System (BETA) - useNewNameSystem configuration
 
--Função Unida ExistsMultiples -> Exists
+-Performance Optimized
 
--Função Unida CreateMultiples -> Create
+-Improvements in documentation
 
--Função Unida GetMultiples -> Get
+-Removed dir argument of Size function
 
--Função Unida DeleteMultiples -> Delete
+-Fixed a bug in the cache version system
 
--Removido changelog do código
+-Fixed bug in delete function
 
-## V 1.3.0
--Performance Otimizada
+## V2.0.0
+-New parameter for Create ($expire)
 
--Documentação atualizada
+-Modified Delete and Create Function
 
--Criptografia do cache(Consome desempenho - Necessário remover comentários do código)
+-Function Delete All renamed to Clear
 
--Modificado CacheDirSize -> DirSize
+-New function: Set (Same thing as Create)
 
--Bugs na função DirSize corrigidos
+-New function: Read (Same thing as Get)
 
--Novo parâmetro para ExistsMultiples($version)
+-New function: Remove (Same thing as Delete)
 
--Novo parâmetro para CreateMultiples($version)
+-Directories are now created with permission 0777
 
--Novo parâmetro para GetMultiples($version)
+-Documented Code
 
--Novo parâmetro para DeleteMultiples($version)
+-Re-written code
 
--Novo parâmetro para DirSize($version)
+-Performance Optimized
 
--Extensão padrão modificada para(.lzp)
+-Documentation updated
 
-## V 1.2.1
--Argumento opcional adicionado nas Configurações('version')
+-CacheNameType setting renamed to cacheNameCfg
 
--Performance Otimizada
+-Removed Create($config) parameter
 
-## V 1.2.0
--Documentação atualizada
+-Removed Cache Encryption
 
--Performance Otimizada
+-Remove DirSize for Size
 
--Modificado LzpCache -> Cache e Lozep -> Lzp
+-United Function ExistsMultiples -> Exists
 
--Modificado new Lozep\LzpCache -> new Lzp\Cache
+-United Function CreateMultiples -> Create
 
-## V 1.1.1
--Performance Otimizada
+-Function GetMultiples - Get
 
--Melhora na Organização do código
+-Unit DeleteMultiples -> Delete
 
--Melhora na documentação
+-Removed code changelog
 
--Novo parametro para DeleteAll($version)
+## V1.3.0
+-Performance Optimized
 
--Novo parametro para Create($config)
+-Documentation updated
 
--Modificação nas funções(veja mais nos exemplos):
+-Cache encryption (Consume performance - Need to remove comments from code)
 
-DeleteMultiples -> Retorna um array($nomecache=>$foiDeletado)
+-Function CacheDirSize renamed to DirSize
 
-CreateMultiples -> Retorna um array($nomecache=>$foiCriado)
+-Bugs in the DirSize function fixed
 
-Delete -> Retorna true(sucesso), false(falha) ou null(não existe)
+-New parameter for ExistsMultiples ($version)
+
+-New parameter for CreateMultiples ($version)
+
+-New parameter for GetMultiples ($version)
+
+-New parameter for DeleteMultiples ($version)
+
+-New parameter for DirSize ($version)
+
+-Extended default extension for (.lzp)
+
+## V1.2.1
+-Added argument added in Settings ('version')
+
+-Improved Performance
+
+## V1.2.0
+-Documentation updated
+
+-Improved Performance
+
+-Modified Lozep\LzpCache to Lzp\Cache
+
+## V1.1.1
+-Performance Optimized
+
+-Improved Code Organization
+
+-Improved Documentation
+
+-New parameter for DeleteAll ($version)
+
+-New parameter for Create ($config)
+
+-Modification in functions (see more in the examples):
+
+DeleteMultiples -> Returns an array ($cachename => [bool $has_been_deleted])
+
+CreateMultiples -> Returns an array ($cachename => [bool $has_been_created])
+
+Delete -> Returns true, false, or null(does not exist)
 
 
-## V 1.1.0
--Novo argumento opcional($cacheVersion)
+## V1.1.0
+-New optional argument ($cacheVersion)
 
--Melhor documentação
+-Improved Documentation
 
--Performance Otimizada
+-Improved Performance
 
--Nova função(cacheDirSize)
+-New function (cacheDirSize)
 
-## V 1.0.0
--Lançamento do código para uso livre(MIT License)
+## V1.0.0
+- Release of the code for free use (MIT License)
