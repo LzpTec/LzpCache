@@ -1,7 +1,16 @@
 # LzpCache Changelog
 
 ## Versão Atual
-1.4.1 - 22/09/2016
+1.5 - 11/05/2017
+
+## V 1.5
+-Código mais organizado
+
+-Mudança no sistema de versão
+
+-Performance otimizada
+
+-Parâmetro dividido: cacheNameType -> namePrefix & storageHash
 
 ## V 1.4.1
 -Mudança no sistema de versão
