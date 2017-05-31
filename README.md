@@ -2,9 +2,9 @@
 **LzpCache** Improves performance in php applications.
 
 ## Versão Atual
-2.1.4 - 25/05/2017
+2.1.5 - 31/05/2017
 
-**LzpCache V2.1.0** Caches from previous versions do not work with new versions
+**LzpCache V2.1.X** Caches from previous versions do not work with new versions
 
 
 ## Resources

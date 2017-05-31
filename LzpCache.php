@@ -1,6 +1,6 @@
 <?php
 /**
-	* LzpCache v2.1.4 - Requires PHP >= 5.5
+	* LzpCache v2.1.5 - Requires PHP >= 5.5
 	*
 	* @author André Posso <admin@lzptec.com>
 	* @copyright 2017 Lzp Tec
@@ -32,7 +32,7 @@ namespace Lzp
 			* 
 			* @var array
 		*/
-		private $tempFileSize = null;
+		private $tempFileSize = 0;
 
 		/**
 			* Constructor
@@ -42,10 +42,7 @@ namespace Lzp
 		*/
 		public function __construct($options = null)
 		{
-			if(is_array($options))
-				$this->cfg = array_merge($this->cfg, $options);
-
-			$this->CreateDir($this->cfg['dir']);
+			$this->Config($options);
 		}
 
 		/**
@@ -240,7 +237,7 @@ namespace Lzp
 				if(is_file($file))
 					$del[] = @unlink($file);
 			}
-			return (!is_null($del) && !in_array(false, $del));
+			return !is_null($del) && !in_array(false, $del);
 		}
 
 		/**
@@ -266,10 +263,10 @@ namespace Lzp
 				$size += is_file($file) ? filesize($file) : $this->Size($version);
 			}
 
-			$this->tempFileSize = null;
+			$this->tempFileSize = 0;
 			$extSize = [' B', ' KB', ' MB', ' GB', ' TB', ' PB', ' EB', ' ZB', ' YB'];
 
-			return ($size ? round($size/pow(1024, ($i = floor(log($size, 1024)))), 2) . $extSize[$i] : null);
+			return ($size) ? round($size/pow(1024, ($i = floor(log($size, 1024)))), 2).$extSize[$i] : null;
 		}
 
 		/**
@@ -323,11 +320,9 @@ namespace Lzp
 			$name = $this->Filter($name);
 
 			$nameHash = hash($this->cfg['nameHash'], $name, true);
-
 			$nameHash = $this->base32($nameHash.$name);
 
 			$path = str_split(strrev($nameHash), 3);
-
 			$path = $path[0].self::DS.$path[1];
 
 			return array($path, strtolower(substr($nameHash, 0, $size)));
@@ -443,7 +438,6 @@ namespace Lzp
 				return bzdecompress($data);
 			elseif($type == 'lzf' && function_exists('lzf_decompress'))
 				return lzf_decompress($data);
-			
 			elseif($type == 'gz' && function_exists('gzinflate'))
 				return gzinflate($data);
 
@@ -456,9 +450,10 @@ namespace Lzp
 			* @param mixed $version Version of the cache.
 			* @return string
 		*/
-		private function GetVersion($version){
+		private function GetVersion($version)
+		{
 			$version = !is_null($version) ? $version : $this->cfg['version'];
-			return !is_null($version) ? $this->Filter($version).self::DS : '';
+			return (!is_null($version)) ? $this->Filter($version).self::DS : '';
 		}
 	}
 }
