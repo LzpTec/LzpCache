@@ -1,63 +1,74 @@
-<?php
-/**
-	* LzpCache v2.1.5 - Requires PHP >= 5.5
-	*
-	* @author André Posso <admin@lzptec.com>
-	* @copyright 2017 Lzp Tec
-	* @license http://www.opensource.org/licenses/mit-license.php MIT License
-*/
+ï»¿<?php
+	/**
+		* LzpCache v2017.1 - Requires PHP >= 5.5
+		*
+		* @author AndrÃ© Posso <admin@lzptec.com>
+		* @copyright 2017 Lzp Tec
+		* @license http://www.opensource.org/licenses/mit-license.php MIT License
+	*/
 namespace Lzp
 {
-	class Cache
+	/**
+		* Base LzpCacheClass
+	*/
+	abstract class Cache
 	{
+		/**
+			* const string
+		*/
 		const DS = DIRECTORY_SEPARATOR;
 
 		/**
-			* Array containing the settings.
-			* 
 			* @var array
 		*/
-		private $cfg = array(
-			'dir' => (__DIR__).'/cache/', 
+		protected $sync = array();
+
+		/**
+			* @var array
+		*/
+		protected $cfg = array(
 			'expire' => 600, 
 			'compress' => 0, 
 			'version' => null, 
 			'nameHash' => 'sha1', 
-			'ext' => '.lzp',
-			'compressType' => 'gz'
+			'compressType' => 'gz', 
+			'syncOnCall' => false
 		);
 
 		/**
-			* Variable for the Size function.
-			* 
-			* @var array
+			* Get Settings
+			*
+			* @return array Current settings for the cache.
 		*/
-		private $tempFileSize = 0;
+		public function GetSettings()
+		{
+			return $this->cfg;
+		}
+
+		public function GetConfig()
+		{
+			return $this->cfg;
+		}
 
 		/**
-			* Constructor
+			* Apply Settings
 			* 
 			* @param array $options Optional containing settings for the cache.
-			* @return void
 		*/
-		public function __construct($options = null)
+		public abstract function ApplySettings($options);
+
+		public function Config($options)
 		{
-			$this->Config($options);
+			$this->ApplySettings($options);
 		}
 
 		/**
-			* Configure the cache
-			* 
-			* @param array $options Contains settings for the cache.
-			* @return void
+			* Merge custom cache settings
+			*
+			* @param array $options Optional containing settings for the cache.
+			* @return array containing the merged settings
 		*/
-		public function Config($options)
-		{
-			if(is_array($options))
-				$this->cfg = array_merge($this->cfg, $options);
-
-			$this->CreateDir($this->cfg['dir']);
-		}
+		protected abstract function CustomSettings($customConfiguration);
 
 		/**
 			* Checks if one or more caches exist
@@ -66,31 +77,11 @@ namespace Lzp
 			* @param null|float|int|string $version Optional Version of the caches to be checked
 			* @return mixed
 		*/
-		public function Exists($names, $version=null){
-			$path = $this->cfg['dir'];
-			$path .= $this->GetVersion($version);
+		public abstract function Exists($names, $version=null);
 
-			if(is_array($names))
-			{
-				$exists = array();
-
-				foreach($names as $name)
-				{
-					$newName = $this->Name($name);
-					$newName = implode(self::DS, $newName);
-					$file = $path.$newName.$this->cfg['ext'];
-					$exists[$name] = is_file($file);
-				}
-			}
-			else
-			{
-				$name = $this->Name($names);
-				$name = implode(self::DS, $name);
-				$file = $path.$name.$this->cfg['ext'];
-				$exists = is_file($file);
-			}
-
-			return $exists;
+		public function Check($names, $version=null)
+		{
+			return $this->Exists($names, $version);
 		}
 
 		/**
@@ -101,37 +92,7 @@ namespace Lzp
 			* @param null|float|int|string $version Opcional Version of the caches to be created
 			* @return array
 		*/
-		public function Create($datas, $expire=null, $version=null)
-		{
-			$path = $this->cfg['dir'];
-			$path .= $this->GetVersion($version);
-
-			$compress = $this->cfg['compress'];
-			$expire = !is_null($expire) ? $expire : $this->cfg['expire'];
-
-			if($expire!=0)
-				$expire += time();
-
-			$complete = array();
-
-			foreach($datas as $name=>$data)
-			{
-				$newName = $this->Name($name);
-				$path .= $newName[0].self::DS;
-
-				$this->CreateDir($path);
-
-				$cacheData = array(
-				'compress' => ($compress > 0) ? $compress.'|'.$this->cfg['compressType'] : null,
-				'expire' => (int)$expire,
-				'data' => ($compress > 0) ? $this->Compress($data, $compress) : $data
-				);
-
-				$complete[$name] = $this->Write($path.$newName[1].$this->cfg['ext'], $cacheData);
-			}
-
-			return $complete;
-		}
+		public abstract function Create($datas, $expire=null, $version=null);
 
 		public function Set($datas, $expire=null, $version=null)
 		{
@@ -146,41 +107,7 @@ namespace Lzp
 			* @param null|float|int|string $version Optional Version of the caches to be retrieved
 			* @return mixed
 		*/
-		public function Get($names, $expired=false, $version=null)
-		{
-			$path  = $this->cfg['dir'];
-			$path .= $this->GetVersion($version);
-
-			if(is_array($names))
-			{
-				$data = array();
-				foreach($names as $name)
-				{
-					$newName = $this->Name($name);
-					$newName = implode(self::DS, $newName);
-					$cache = $this->Open($path.$newName.$this->cfg['ext']);
-
-					if($cache['expire'] == 0 || time() < $cache['expire'] || $expired)
-					{
-						$cacheData = $cache['data'];
-						$compress = explode('|', $cache['compress']);
-						$data[$name] = ($compress[0] > 0) ? $this->Uncompress($cacheData, $compress[1]) : $cacheData;
-					}
-				}
-				return $data;
-			}
-
-			$names = $this->Name($names);
-			$names = implode(self::DS, $names);
-			$cache = $this->Open($path.$names.$this->cfg['ext']);
-
-			if($cache['expire'] == 0 || time() < $cache['expire'] || $expired)
-			{
-				$data = $cache['data'];
-				$compress = explode('|', $cache['compress']);
-				return ($compress[0] > 0) ? $this->Uncompress($data, $compress[1]) : $data;
-			}
-		}
+		public abstract function Get($names, $expired=false, $version=null);
 
 		public function Read($names, $expired=false, $version=null)
 		{
@@ -194,24 +121,7 @@ namespace Lzp
 			* @param null|float|int|string $version Optional Version of the caches to be deleted
 			* @return mixed
 		*/
-		public function Delete($names, $version=null)
-		{
-			if(!is_writeable($this->cfg['dir']))
-				die('Direrório não diponível ou sem permissão para escrita');
-
-			$path = $this->cfg['dir'];
-			$path .= $this->GetVersion($version);
-
-			$del = array();
-			foreach($names as $name)
-			{
-				$newName = $this->Name($names);
-				$newName = implode(self::DS, $newName);
-				$file = $path.$newName.$this->cfg['ext'];
-				$del[$name] = is_file($file) ? @unlink($file) : null;
-			}
-			return $del;
-		}
+		public abstract function Delete($names, $version=null);
 
 		public function Remove($names, $version=null)
 		{
@@ -219,26 +129,12 @@ namespace Lzp
 		}
 
 		/**
-			* Create all caches
+			* Delete all caches
 			* 
 			* @param null|float|int|string $version Optional Version of the caches to be deleted
 			* @return mixed
 		*/
-		public function Clear($version=null)
-		{
-			if(!is_writeable($this->cfg['dir']))
-				die('Direrório não diponível ou sem permissão para escrita');
-
-			$del = array();
-
-			$files = glob($this->cfg['dir'].$this->GetVersion($version).'/*', GLOB_NOSORT);
-			foreach($files as $file)
-			{
-				if(is_file($file))
-					$del[] = @unlink($file);
-			}
-			return !is_null($del) && !in_array(false, $del);
-		}
+		public abstract function Clear($version=null);
 
 		/**
 			* Reads and returns the cache directory size
@@ -247,55 +143,32 @@ namespace Lzp
 			* @param null|float|int|string $version Optional Version of the caches to be read
 			* @return null|string
 		*/
-		public function Size($version=null)
-		{
-			$path = !is_null($this->tempFileSize) ? $this->tempFileSize : $this->cfg['dir'];
-			$path .= $this->GetVersion($version);
-
-			if(!is_readable($path))
-				die('Direrório não diponível ou sem permissão para leitura');
-
-			$size = 0;
-			$files = glob(rtrim($path, '/').'/*', GLOB_NOSORT);
-			foreach($files as $file)
-			{
-				$this->tempFileSize = $file;
-				$size += is_file($file) ? filesize($file) : $this->Size($version);
-			}
-
-			$this->tempFileSize = 0;
-			$extSize = [' B', ' KB', ' MB', ' GB', ' TB', ' PB', ' EB', ' ZB', ' YB'];
-
-			return ($size) ? round($size/pow(1024, ($i = floor(log($size, 1024)))), 2).$extSize[$i] : null;
-		}
+		public abstract function Size($version=null);
 
 		/**
-			* Reads and returns data from a file
-			* 
-			* @param string $file File to read
-			* @return mixed
+			* Sync all cache
 		*/
-		private function Open($file)
-		{
-			if(!is_file($file))
-				return null;
-
-			$file = file_get_contents($file);
-
-			return $this->Decode($file);
-		}
+		public abstract function Sync();
 
 		/**
-			* Create a file and add data to it
+			* Returns the final cache name
 			* 
-			* @param string $file File to create
-			* @param mixed $data Data to be added to the file
-			* @return mixed
+			* @param string $name Cache name
+			* @return array
 		*/
-		private function Write($file, $data)
+		protected function Name($name)
 		{
-			$data = $this->Encode($data);
-			return file_put_contents($file, $data);
+			$name = $this->Filter($name);
+
+			$nameHash = hash($this->cfg['nameHash'], $name, true);
+
+			$nameHash = $this->Base32($nameHash.$name);
+
+			$path = str_split(strrev($nameHash), 3);
+
+			$path = $path[0].self::DS.$path[1];
+
+			return array($path, strtolower($nameHash));
 		}
 
 		/**
@@ -304,28 +177,9 @@ namespace Lzp
 			* @param string $data String to be filtered by removing any invalid characters
 			* @return string
 		*/
-		private function Filter($data)
+		protected function Filter($data)
 		{
 			return preg_replace("/[^a-zA-Z0-9_.-]/", "", $data);
-		}
-
-		/**
-			* Returns the final cache name
-			* 
-			* @param string $name Cache name
-			* @return array
-		*/
-		private function Name($name, $size=18)
-		{
-			$name = $this->Filter($name);
-
-			$nameHash = hash($this->cfg['nameHash'], $name, true);
-			$nameHash = $this->base32($nameHash.$name);
-
-			$path = str_split(strrev($nameHash), 3);
-			$path = $path[0].self::DS.$path[1];
-
-			return array($path, strtolower(substr($nameHash, 0, $size)));
 		}
 
 		/**
@@ -334,7 +188,7 @@ namespace Lzp
 			* @param string $path Directory path
 			* @return string
 		*/
-		private function CreateDir($path)
+		protected function CreateDir($path)
 		{
 			if(!file_exists($path))
 				mkdir($path, 0777, true);
@@ -346,7 +200,7 @@ namespace Lzp
 			* @param string $data Data to be coded
 			* @return string
 		*/
-		private function base32($data)
+		protected function Base32($data)
 		{
 			$dataSize = strlen($data);
 			$result = '';
@@ -383,7 +237,7 @@ namespace Lzp
 			* @param mixed $data Array or Object that will be converted to string.
 			* @return string
 		*/
-		private function Encode($data)
+		protected function Encode($data)
 		{
 			return (is_array($data) || is_object($data)) ? serialize($data) : $data;
 		}
@@ -394,7 +248,7 @@ namespace Lzp
 			* @param mixed $data Data that will be decoded.
 			* @return mixed
 		*/
-		private function Decode($data)
+		protected function Decode($data)
 		{
 			if(is_null($data))
 				return null;
@@ -407,18 +261,18 @@ namespace Lzp
 			* Compress the cache
 			* 
 			* @param string $data Data that will be compressed.
-			* @param int $compressLevel Compression level from 1 to 9.
+			* @param array $settings General Settings array
 			* @return string
 		*/
-		private function Compress($data, $compressLevel)
+		protected function Compress($data, $settings)
 		{
 			$data = $this->Encode($data);
 
-			if($this->cfg['compressType'] == 'gz' && function_exists('gzdeflate'))
-				return gzdeflate($data, $compressLevel);
-			elseif($this->cfg['compressType'] == 'bz' && function_exists('bzcompress'))
-				return bzcompress($data, $compressLevel);
-			elseif($this->cfg['compressType'] == 'lzf' && function_exists('lzf_compress'))
+			if($settings['compressType'] == 'gz' && function_exists('gzdeflate'))
+				return gzdeflate($data, $settings['compress']);
+			elseif($settings['compressType'] == 'bz' && function_exists('bzcompress'))
+				return bzcompress($data, $settings['compress']);
+			elseif($settings['compressType'] == 'lzf' && function_exists('lzf_compress'))
 				return lzf_compress($data);
 
 			return $data;
@@ -430,16 +284,16 @@ namespace Lzp
 			* @param string $data Data that will be decompressed.
 			* @return string
 		*/
-		private function Uncompress($data, $type)
+		protected function Uncompress($data, $settings)
 		{
-			$data = $this->Decode($data);
+			if($settings['compressType'] == 'bz' && function_exists('bzdecompress'))
+				$data = bzdecompress($data);
+			elseif($settings['compressType'] == 'lzf' && function_exists('lzf_decompress'))
+				$data = lzf_decompress($data);
+			elseif($settings['compressType'] == 'gz' && function_exists('gzinflate'))
+				$data = gzinflate($data);
 
-			if($type == 'bz' && function_exists('bzdecompress'))
-				return bzdecompress($data);
-			elseif($type == 'lzf' && function_exists('lzf_decompress'))
-				return lzf_decompress($data);
-			elseif($type == 'gz' && function_exists('gzinflate'))
-				return gzinflate($data);
+			$data = $this->Decode($data);
 
 			return $data;
 		}
@@ -450,10 +304,10 @@ namespace Lzp
 			* @param mixed $version Version of the cache.
 			* @return string
 		*/
-		private function GetVersion($version)
+		protected function GetVersion($version)
 		{
 			$version = !is_null($version) ? $version : $this->cfg['version'];
-			return (!is_null($version)) ? $this->Filter($version).self::DS : '';
+			return !is_null($version) ? $this->Filter($version).self::DS : '';
 		}
 	}
 }

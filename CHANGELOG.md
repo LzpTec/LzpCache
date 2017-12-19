@@ -1,7 +1,31 @@
 # LzpCache Changelog
 
-## Current version
-2.1.5 - 31/05/2017
+## Current stable version
+2017.1 - 19/12/2017
+
+## 2017.1
+
+-New version numbering system
+
+-New Cache mode: Sync on call
+
+-New function: GetSettings && GetConfig (Get current settings)
+
+-New function: Check (Same thing as Exists)
+
+-Pass custom settings to the cache
+
+-New function: ApplySettings (Same thing as Config)
+
+-Remove parameter $version in all functions(except Size and Clear)
+
+-Added parameter $setting in all functions(except Size and Clear)
+
+-Re-written code
+
+**Delayed**
+
+-Support for MemCache and MemCached.
 
 ## 2.1.5
 -Small performance improvement
@@ -114,9 +138,9 @@
 
 -United Function CreateMultiples -> Create
 
--Function GetMultiples - Get
+-United Function DeleteMultiples -> Delete
 
--Unit DeleteMultiples -> Delete
+-United Function GetMultiples -> Get
 
 -Removed code changelog
 
