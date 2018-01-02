@@ -1,7 +1,25 @@
-# LzpCache Changelog
+﻿# LzpCache Changelog
 
 ## Current stable version
-2017.1 - 19/12/2017
+2018.1 - 02/01/2018
+
+## 2018.1
+
+-Fixed Typo
+
+-Remove parameter $version in functions Size and Clear
+
+-Added parameter $setting in functions Size and Clear
+
+-Updated Documentation
+
+-Improved performance
+
+-Default hash pattern changed to MD5
+
+-Added for Backwards compatibility: GetVersion function
+
+-Fixed UTF-8 namespace bug
 
 ## 2017.1
 
