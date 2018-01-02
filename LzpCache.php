@@ -55,11 +55,14 @@ abstract class Cache
 		* 
 		* @param array $options Optional containing settings for the cache.
 	*/
-	public abstract function ApplySettings($options);
+	public function ApplySettings($options)
+	{
+		$this->cfg = $this->CustomSettings($options);
+	}
 
 	public function Config($options)
 	{
-		$this->ApplySettings($options);
+		$this->cfg = $this->CustomSettings($options);
 	}
 
 	/**
@@ -74,15 +77,36 @@ abstract class Cache
 		* Checks if one or more caches exist
 		* 
 		* @param array|string $names Names of the caches to be checked
-		* @param array $settings Optional containing settings for the caches to be checked
+		* @param array $settings Optional containing settings for the cache.
 		* @return mixed
 	*/
-	public abstract function Exists($names, $settings=null);
+	public function Exists($name, $settings=null)
+	{
+		$settings = $this->CustomSettings($settings);
+
+		if(is_array($name))
+		{
+			$exists = array();
+
+			foreach($name as $n)
+			{
+				$exists[$n] = $this->CacheExists($n, $settings);
+			}
+		}
+		else
+		{
+			$exists = $this->CacheExists($name, $settings);
+		}
+
+		return $exists;
+	}
 
 	public function Check($names, $settings=null)
 	{
 		return $this->Exists($names, $settings);
 	}
+
+	protected abstract function CacheExists($name, $settings);
 
 	/**
 		* Create one or more caches

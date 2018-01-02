@@ -29,16 +29,6 @@ class DiskCache extends Cache
 	private $tempFileSize = null;
 
 	/**
-		* Apply Settings
-		* 
-		* @param array $options Optional containing settings for the cache.
-	*/
-	public function ApplySettings($options)
-	{
-		$this->cfg = $this->CustomSettings($options);
-	}
-
-	/**
 		* Merge custom cache settings
 		*
 		* @param array $options Optional containing settings for the cache.
@@ -60,33 +50,12 @@ class DiskCache extends Cache
 	}
 
 	/**
-		* Checks if one or more caches exist
+		* Checks if a cache exist
 		* 
-		* @param array|string $names Names of the caches to be checked
+		* @param string $name Name of the cache to be checked
 		* @param array $settings Optional containing settings for the cache.
-		* @return mixed
+		* @return bool
 	*/
-	public function Exists($name, $settings=null)
-	{
-		$settings = $this->CustomSettings($settings);
-
-		if(is_array($name))
-		{
-			$exists = array();
-
-			foreach($name as $n)
-			{
-				$exists[$n] = $this->CacheExists($n, $settings);
-			}
-		}
-		else
-		{
-			$exists = $this->CacheExists($name, $settings);
-		}
-
-		return $exists;
-	}
-
 	private function CacheExists($name, $settings)
 	{
 		$path = $this->GetDirectoryAndVersion($settings);
