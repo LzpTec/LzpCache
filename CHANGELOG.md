@@ -173,6 +173,27 @@
 
 -Removed code changelog
 
+## V 1.5.0
+-Code more organized
+
+-Version System Change
+
+-Performance optimized
+
+-Divided parameter: cacheNameType -> namePrefix & storageHash
+
+## V 1.4.1
+-Version System Change
+
+-Removed code changelog
+
+-Removed cache encryption
+
+-Performance optimized
+
+## V 1.4.0
+-Cache Encryption Added(Consume Performance)
+
 ## V1.3.0
 -Performance Optimized
 
