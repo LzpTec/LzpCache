@@ -1,6 +1,6 @@
 <?php
 /**
-	* LzpCache v2018.1 - Requires PHP >= 5.5
+	* LzpCache v2018.2 - Requires PHP >= 5.5
 	*
 	* @author André Posso <admin@lzptec.com>
 	* @copyright 2018 Lzp Tec

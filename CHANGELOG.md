@@ -3,6 +3,13 @@
 ## Current stable version
 2018.1 - 02/01/2018
 
+## Current dev version
+2018.2 - 2018
+
+## 2018.2
+
+-Support for MemCache and MemCached.
+
 ## 2018.1
 
 -Fixed Typo
@@ -20,6 +27,10 @@
 -Added for Backwards compatibility: GetVersion function
 
 -Fixed UTF-8 namespace bug
+
+**Delayed**
+
+-Support for MemCache and MemCached.
 
 ## 2017.1
 
