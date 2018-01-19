@@ -6,11 +6,24 @@
 ## Current dev version
 2018.2 - 2018
 
-## 2018.2
-
+## [2018.2] - 2018-01-19
+### Coming Soon
 -Support for MemCache and MemCached.
 
-## 2018.1
+### Added
+-?
+
+### Changed
+-Added parameter $round in function Size
+-New ChangeLog - based on: http://keepachangelog.com/en/1.0.0/
+
+### Fixed
+-Functions Size and Clear
+
+### Deprecated
+-Function GetVersion
+
+## [2018.1]
 
 -Fixed Typo
 
@@ -28,11 +41,11 @@
 
 -Fixed UTF-8 namespace bug
 
-**Delayed**
+### Delayed
 
 -Support for MemCache and MemCached.
 
-## 2017.1
+## [2017.1]
 
 -New version numbering system
 
@@ -52,24 +65,24 @@
 
 -Re-written code
 
-**Delayed**
+### Delayed**
 
 -Support for MemCache and MemCached.
 
-## 2.1.5
+## [2.1.5]
 -Small performance improvement
 
-## 2.1.4
+## [2.1.4]
 -Code improvements
 
 -Small performance improvement
 
 -Clean code
 
-## V2.1.3b
+## [2.1.3b]
 -Bugs fixed
 
-## V2.1.3 [YANKED]
+## [2.1.3] [YANKED]
 -English Content
 
 -Code improvements
@@ -78,14 +91,14 @@
 
 -Small performance improvement
 
-## V2.1.2
+## [2.1.2]
 -Fixed configuration bug
 
 -Cache configuration improvements
 
 -Small performance improvement
 
-## V2.1.1
+## [2.1.1]
 -Fixed bugs in compression and decompression functions
 
 -Enhanced compression
@@ -96,7 +109,7 @@
 
 -New option to configure compression (compressType)
 
-## V2.1.0
+## [2.1.0]
 -New Name System (Does not work with v2.0)
 
 -Names are now case-sensitive
@@ -109,13 +122,13 @@
 
 -Hash pattern changed to SHA1
 
-## V2.0.3
+## [2.0.3]
 - Fixed the Bzip2 compression option
 
-## V2.0.2 [YANKED]
+## [2.0.2] [YANKED]
 -New compression options (Lzf and Bzip2)
 
-## V2.0.1
+## [2.0.1]
 -Removed the cacheNameCfg configuration
 
 -New nameHash setting
@@ -132,7 +145,7 @@
 
 -Fixed bug in delete function
 
-## V2.0.0
+## [2.0.0]
 -New parameter for Create ($expire)
 
 -Modified Delete and Create Function
@@ -173,7 +186,7 @@
 
 -Removed code changelog
 
-## V 1.5.0
+## [1.5.0]
 -Code more organized
 
 -Version System Change
@@ -182,7 +195,7 @@
 
 -Divided parameter: cacheNameType -> namePrefix & storageHash
 
-## V 1.4.1
+## [1.4.1]
 -Version System Change
 
 -Removed code changelog
@@ -191,10 +204,10 @@
 
 -Performance optimized
 
-## V 1.4.0
+## [1.4.0]
 -Cache Encryption Added(Consume Performance)
 
-## V1.3.0
+## [1.3.0]
 -Performance Optimized
 
 -Documentation updated
@@ -217,19 +230,19 @@
 
 -Extended default extension for (.lzp)
 
-## V1.2.1
+## [1.2.1]
 -Added argument added in Settings ('version')
 
 -Improved Performance
 
-## V1.2.0
+## [1.2.0]
 -Documentation updated
 
 -Improved Performance
 
 -Modified Lozep\LzpCache to Lzp\Cache
 
-## V1.1.1
+## [1.1.1]
 -Performance Optimized
 
 -Improved Code Organization
@@ -249,7 +262,7 @@ CreateMultiples -> Returns an array ($cachename => [bool $has_been_created])
 Delete -> Returns true, false, or null(does not exist)
 
 
-## V1.1.0
+## [1.1.0]
 -New optional argument ($cacheVersion)
 
 -Improved Documentation
@@ -258,5 +271,5 @@ Delete -> Returns true, false, or null(does not exist)
 
 -New function (cacheDirSize)
 
-## V1.0.0
+## [1.0.0]
 - Release of the code for free use (MIT License)
