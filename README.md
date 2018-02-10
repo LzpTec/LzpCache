@@ -34,7 +34,6 @@ Initialize:
 To get current settings:
 ```php
 	$cache->GetSettings();
-	$cache->GetConfig();
 //Returns
 	array('dir', 'expire', 'compress', 'version', 'nameHash', 'ext', 'compressType', 'syncOnCall');
 ```
@@ -62,7 +61,7 @@ To configure:
 	//Write cache only when call function Sync(Optional)
 	$config['syncOnCall'] = false;
 //Apply Settings:
-	$cache->Config($config);
+	$cache->ApplySettings($config);
 ```
 
 To get a single cache:
@@ -163,6 +162,8 @@ To check the cache directory size:
 ```php
 $cache->Size($settings);
 //Parameters( = default):
+	//$round Rounds values to B, KB, MB, GB, TB...(Optional)
+	
 	//Settings for the cache size(Optional)
 	$settings = null;
 //Returns

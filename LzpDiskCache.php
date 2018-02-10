@@ -8,8 +8,6 @@
  */
 namespace Lzp;
 
-require 'LzpCache.php';
-
 class DiskCache extends Cache
 {
     private $diskCfg = array(
@@ -61,33 +59,15 @@ class DiskCache extends Cache
     /**
      * Create one or more caches
      *
-     * @param array $names Names of the caches to be created
+     * @param array $name Name of the cache to be created
      * @param boolean $expire Optional Tempo para o cache expirar
      * @param array $settings Optional containing settings for the cache.
      * @return array
      */
-    public function Create($datas, $expire = null, $settings = null)
+    protected function CacheWrite($name, $data, $settings)
     {
-        $settings = $this->CustomSettings($settings);
-        $expire = is_int($expire) ? $expire : $settings['expire'];
-
         $path = $this->GetDirectoryAndVersion($settings);
 
-        if ($expire > 0) {
-            $settings['expire'] = $expire + time();
-        }
-
-        $complete = array();
-
-        foreach ($datas as $name => $data) {
-            $complete[$name] = $this->CacheWrite($path, $name, $data, $settings);
-        }
-
-        return $complete;
-    }
-
-    private function CacheWrite($path, $name, $data, $settings)
-    {
         $newName = $this->Name($name);
         $path .= $newName[0] . self::DS;
 
@@ -113,37 +93,18 @@ class DiskCache extends Cache
     /**
      * Get one or more caches
      *
-     * @param array|string $names Names of the caches to be retrieved
-     * @param boolean $expired Optional ignores if the cache has already expired
+     * @param array|string $name Name of the cache to be retrieved
+     * @param boolean $ignoreExpired Optional ignores if the cache has already expired
      * @param array $settings Optional containing settings for the cache.
      * @return mixed
      */
-    public function Get($name, $ignoreExpired = false, $settings = null)
+    protected function CacheRead($name, $ignoreExpired, $settings)
     {
-        $settings = $this->CustomSettings($settings);
         $path = $this->GetDirectoryAndVersion($settings);
 
-        if (is_array($name)) {
-            $data = array();
-            foreach ($name as $n) {
-                $data[$n] = $this->CacheRead($path, $n, $ignoreExpired, $settings);
-            }
-            return $data;
-        }
-
-        return $this->CacheRead($path, $name, $ignoreExpired, $settings);
-    }
-
-    /**
-     * Reads and returns data from a file
-     *
-     * @param string $file File to read
-     * @return mixed
-     */
-    private function CacheRead($path, $name, $ignoreExpired, $settings)
-    {
         $settings = $this->CustomSettings($settings);
-        $cache = $path . implode(self::DS, $this->Name($name)) . $settings['ext'];
+        $cache = $path . implode(self::DS, $this->Name($name));
+        $cache .= $settings['ext'];
 
         if ($settings['syncOnCall'] && array_key_exists($cache, $this->sync)) {
             $cache = $this->sync[$cache];

@@ -6,7 +6,7 @@
 ## Current dev version
 2018.2 - 2018
 
-## [2018.2] - 2018-01-19
+## [2018.2]
 ### Coming Soon
 -Support for MemCache and MemCached.
 
@@ -22,6 +22,8 @@
 
 ### Deprecated
 -Function GetVersion
+-Function GetConfig(Use GetSettings instead)
+-Function Config(Use ApplySettings instead)
 
 ## [2018.1]
 

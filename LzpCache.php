@@ -107,32 +107,65 @@ abstract class Cache
     /**
      * Create one or more caches
      *
-     * @param array $names Names of the caches to be created
-     * @param boolean $expire Opcional Tempo para o cache expirar
-     * @param array $settings Optional containing settings for the caches to be created
+     * @param array $datas Names and Data of the caches to be created
+     * @param boolean $expire Optional Tempo para o cache expirar
+     * @param array $settings Optional containing settings for the cache.
      * @return array
      */
-    abstract public function Create($datas, $expire = null, $settings = null);
+    public function Create($datas, $expire = null, $settings = null)
+    {
+        $settings = $this->CustomSettings($settings);
+        $expire = is_int($expire) ? $expire : $settings['expire'];
+
+        if ($expire > 0) {
+            $settings['expire'] = $expire + time();
+        }
+
+        $complete = array();
+
+        foreach ($datas as $name => $data) {
+            $complete[$name] = $this->CacheWrite($name, $data, $settings);
+        }
+
+        return $complete;
+    }
 
     public function Set($datas, $expire = null, $settings = null)
     {
         return $this->Create($datas, $expire, $settings);
     }
 
+    abstract protected function CacheWrite($name, $data, $settings);
+
     /**
      * Get one or more caches
      *
      * @param array|string $names Names of the caches to be retrieved
-     * @param boolean $expired Optional ignores if the cache has already expired
-     * @param array $settings Optional containing settings for the caches to be retrieved
+     * @param boolean $ignoreExpired Optional ignores if the cache has already expired
+     * @param array $settings Optional containing settings for the cache.
      * @return mixed
      */
-    abstract public function Get($names, $expired = false, $settings = null);
+    public function Get($name, $ignoreExpired = false, $settings = null)
+    {
+        $settings = $this->CustomSettings($settings);
+
+        if (is_array($name)) {
+            $data = array();
+            foreach ($name as $n) {
+                $data[$n] = $this->CacheRead($n, $ignoreExpired, $settings);
+            }
+            return $data;
+        }
+
+        return $this->CacheRead($name, $ignoreExpired, $settings);
+    }
 
     public function Read($names, $expired = false, $settings = null)
     {
         return $this->Get($names, $expired, $settings);
     }
+
+    abstract protected function CacheRead($name, $ignoreExpired, $settings);
 
     /**
      * Delete one or more caches
@@ -159,11 +192,11 @@ abstract class Cache
     /**
      * Reads and returns the cache directory size
      *
-     * @param string $dir Directory to read
+     * @param bool $round Optional Rounds values to B, KB, MB, GB, TB...
      * @param array $settings Optional containing settings for the caches to be read
      * @return null|string
      */
-    abstract public function Size($settings = null);
+    abstract public function Size($round = false, $settings = null);
 
     /**
      * Sync all cache

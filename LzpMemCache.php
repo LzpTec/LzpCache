@@ -8,8 +8,6 @@
  */
 namespace Lzp;
 
-require 'LzpCache.php';
-
 class MemCache extends Cache
 {
     private $memCfg = array(
@@ -38,7 +36,7 @@ class MemCache extends Cache
     /**
      * Checks if a cache exist
      *
-     * @param array|string $names Name of the cache to be checked
+     * @param string $name Name of the cache to be checked
      * @param array $settings Optional containing settings for the cache.
      * @return bool
      */
@@ -48,23 +46,23 @@ class MemCache extends Cache
     /**
      * Create one or more caches
      *
-     * @param array $names Names of the caches to be created
-     * @param boolean $expire Opcional Tempo para o cache expirar
-     * @param array $settings Optional containing settings for the caches to be created
+     * @param array $name Name of the cache to be created
+     * @param boolean $expire Optional Tempo para o cache expirar
+     * @param array $settings Optional containing settings for the cache.
      * @return array
      */
-    public function Create($datas, $expire = null, $settings = null)
+    public function CacheWrite($name, $data, $settings)
     {}
 
     /**
      * Get one or more caches
      *
-     * @param array|string $names Names of the caches to be retrieved
-     * @param boolean $expired Optional ignores if the cache has already expired
-     * @param array $settings Optional containing settings for the caches to be retrieved
+     * @param array|string $name Name of the cache to be retrieved
+     * @param boolean $ignoreExpired Optional ignores if the cache has already expired
+     * @param array $settings Optional containing settings for the cache.
      * @return mixed
      */
-    public function Get($names, $expired = false, $settings = null)
+    public function GetCacheRead($name, $ignoreExpired, $settings)
     {}
 
     /**
@@ -89,11 +87,11 @@ class MemCache extends Cache
     /**
      * Reads and returns the cache directory size
      *
-     * @param string $dir Directory to read
+     * @param bool $round Optional Rounds values to B, KB, MB, GB, TB...
      * @param array $settings Optional containing settings for the caches to be read
      * @return null|string
      */
-    public function Size($settings = null)
+    public function Size($round = false, $settings = null)
     {}
 
     /**
