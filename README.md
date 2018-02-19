@@ -15,11 +15,8 @@
 - Custom cache file extension
 - Create / Retrieve / Delete multiple caches at once
 - It is possible to get a cache even if it has expired
-- LZF, Bzip2 and Gzip compression
-
-
-## Resources that may be introduced
--Support for MemCache and MemCached.
+- LZF and Gzip compression
+-Support for MemCache and MemCached
 
 
 ## How to use(Disk Cache)
@@ -56,7 +53,7 @@ To configure:
 	$config['nameHash'] = 'md5';
 	//Cache file extension (Optional)
 	$config['ext'] = '.lzp';
-	//Cache Compression - supported: gz, lzf, and bz (Optional)
+	//Cache Compression - supported: gz and lzf (Optional)
 	$config['compressType'] = 'gz';
 	//Write cache only when call function Sync(Optional)
 	$config['syncOnCall'] = false;

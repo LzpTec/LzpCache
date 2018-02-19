@@ -47,7 +47,7 @@ class MemCache extends Cache
      * Create one or more caches
      *
      * @param array $name Name of the cache to be created
-     * @param boolean $expire Optional Tempo para o cache expirar
+     * @param boolean $expire Optional Time for the cache expires
      * @param array $settings Optional containing settings for the cache.
      * @return array
      */

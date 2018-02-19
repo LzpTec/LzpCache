@@ -108,7 +108,7 @@ abstract class Cache
      * Create one or more caches
      *
      * @param array $datas Names and Data of the caches to be created
-     * @param boolean $expire Optional Tempo para o cache expirar
+     * @param boolean $expire Optional Time for the cache expires
      * @param array $settings Optional containing settings for the cache.
      * @return array
      */
@@ -233,20 +233,6 @@ abstract class Cache
     protected function Filter($data)
     {
         return preg_replace("/[^a-zA-Z0-9_.-]/", "", $data);
-    }
-
-    /**
-     * Create a directory
-     *
-     * @param string $path Directory path
-     * @return string
-     */
-    protected function CreateDir($path)
-    {
-        if (!file_exists($path)) {
-            mkdir($path, 0777, true);
-        }
-
     }
 
     /**

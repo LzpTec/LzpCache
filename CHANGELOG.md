@@ -7,23 +7,36 @@
 2018.2 - 2018
 
 ## [2018.2]
+
 ### Coming Soon
+
 -Support for MemCache and MemCached.
 
-### Added
--?
-
 ### Changed
+
+-Moved function Create to LzpCache Core
+
+-Moved function Get to LzpCache Core
+
 -Added parameter $round in function Size
+
 -New ChangeLog - based on: http://keepachangelog.com/en/1.0.0/
 
 ### Fixed
--Functions Size and Clear
+
+-Function Size(Not working)
+
+-Function Clear(Not working)
 
 ### Deprecated
--Function GetVersion
+
+-Bzip2 Compression
+
 -Function GetConfig(Use GetSettings instead)
+
 -Function Config(Use ApplySettings instead)
+
+-Function GetVersion
 
 ## [2018.1]
 
@@ -67,7 +80,7 @@
 
 -Re-written code
 
-### Delayed**
+### Delayed
 
 -Support for MemCache and MemCached.
 

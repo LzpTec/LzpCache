@@ -33,7 +33,8 @@ class DiskCache extends Cache
             $mergedCfg = array_merge($this->cfg, $customConfiguration);
 
             $mergedCfg['version'] = $this->GetFilteredVersion($mergedCfg['version']);
-            $this->CreateDir($mergedCfg['dir']);
+
+            $this->ValidateDirectory($mergedCfg['dir']);
 
             return $mergedCfg;
         }
@@ -50,7 +51,7 @@ class DiskCache extends Cache
      */
     protected function CacheExists($name, $settings)
     {
-        $path = $this->GetDirectoryAndVersion($settings);
+        $path = $this->GetDirectoryWithVersion($settings);
         $name = implode(self::DS, $this->Name($name));
 
         return is_file($path . $name . $settings['ext']);
@@ -60,18 +61,15 @@ class DiskCache extends Cache
      * Create one or more caches
      *
      * @param array $name Name of the cache to be created
-     * @param boolean $expire Optional Tempo para o cache expirar
+     * @param boolean $expire Optional Time for the cache expires
      * @param array $settings Optional containing settings for the cache.
      * @return array
      */
     protected function CacheWrite($name, $data, $settings)
     {
-        $path = $this->GetDirectoryAndVersion($settings);
+        $path = $this->GetDirectoryWithVersion($settings);
 
-        $newName = $this->Name($name);
-        $path .= $newName[0] . self::DS;
-
-        $file = $path . $newName[1] . $settings['ext'];
+        $file = $path . implode(self::DS, $this->Name($name)) . $settings['ext'];
 
         $cacheData = array(
             'settings' => $settings,
@@ -85,7 +83,7 @@ class DiskCache extends Cache
             return true;
         }
 
-        $this->CreateDir($path);
+        $this->ValidateDirectory($path);
 
         return file_put_contents($file, $data);
     }
@@ -100,7 +98,7 @@ class DiskCache extends Cache
      */
     protected function CacheRead($name, $ignoreExpired, $settings)
     {
-        $path = $this->GetDirectoryAndVersion($settings);
+        $path = $this->GetDirectoryWithVersion($settings);
 
         $settings = $this->CustomSettings($settings);
         $cache = $path . implode(self::DS, $this->Name($name));
@@ -139,7 +137,7 @@ class DiskCache extends Cache
     public function Delete($names, $settings = null)
     {
         $settings = $this->CustomSettings($settings);
-        $path = $this->GetDirectoryAndVersion($settings);
+        $path = $this->GetDirectoryWithVersion($settings);
 
         if (!is_writeable($path)) {
             die('Directory not available');
@@ -171,7 +169,7 @@ class DiskCache extends Cache
     public function Clear($settings = null)
     {
         $settings = $this->CustomSettings($settings);
-        $path = !is_null($this->tempFileSize) ? $this->tempFileSize : $this->GetDirectoryAndVersion($settings);
+        $path = !is_null($this->tempFileSize) ? $this->tempFileSize : $this->GetDirectoryWithVersion($settings);
 
         if (!is_writeable($path)) {
             die('Directory not available');
@@ -204,7 +202,7 @@ class DiskCache extends Cache
     {
         $settings = $this->CustomSettings($settings);
 
-        $path = $this->GetDirectoryAndVersion($settings);
+        $path = $this->GetDirectoryWithVersion($settings);
 
         if (!is_readable($path)) {
             die('Directory not available');
@@ -232,19 +230,33 @@ class DiskCache extends Cache
     {
         $sync = $this->sync;
         foreach ($sync as $k => $v) {
-            $this->CreateDir(pathinfo($k)['dirname']);
+            $this->ValidateDirectory(pathinfo($k)['dirname']);
             file_put_contents($k, $v);
         }
         $this->sync = array();
     }
 
     /**
-     * GetDirectoryAndVersion
+     * GetDirectoryWithVersion
      *
      * @return string
      */
-    private function GetDirectoryAndVersion($settings)
+    private function GetDirectoryWithVersion($settings)
     {
         return $settings['dir'] . $settings['version'];
+    }
+
+    /**
+     * Create a directory
+     *
+     * @param string $path Directory path
+     * @return string
+     */
+    protected function ValidateDirectory($path)
+    {
+		if(!is_dir($path))
+		{
+			mkdir($path, 0777, true);
+		}
     }
 }
