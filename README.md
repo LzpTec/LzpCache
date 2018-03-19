@@ -16,30 +16,33 @@
 - Create / Retrieve / Delete multiple caches at once
 - It is possible to get a cache even if it has expired
 - LZF and Gzip compression
--Support for MemCache and MemCached
+
+
+## Resources that may be introduced
+- Support for MemCache and MemCached.
 
 
 ## How to use(Disk Cache)
 Initialize:
 ```php
 // With settings
-	$Cache = new Lzp\DiskCache($config);
+	$Cache = new LzpCache\DiskCache($config);
 // Without settings
-	$Cache = new Lzp\DiskCache;
+	$Cache = new LzpCache\DiskCache;
 ```
 
 To get current settings:
 ```php
 	$cache->GetSettings();
 //Returns
-	array('dir', 'expire', 'compress', 'version', 'nameHash', 'ext', 'compressType', 'syncOnCall');
+	array('dir', 'expire', 'compress', 'version', 'keyHash', 'ext', 'compressType', 'sync', 'syncOnDestruct');
 ```
 
 
 To configure:
 ```php
 //Settings values
-	$config = array('dir', 'expire', 'compress', 'version', 'nameHash', 'ext', 'compressType', 'syncOnCall');
+	$config = array('dir', 'expire', 'compress', 'version', 'keyHash', 'ext', 'compressType', 'sync', 'syncOnDestruct');
 //Parameters( = default/demonstration):
 	//Directory path where the cache will be stored
 	$config['dir'] = __DIR__.'/cache/';
@@ -49,14 +52,16 @@ To configure:
 	$config['compress'] = 0;
 	//Null disables - Accepted values: float, string and int (Optional)
 	$config['version'] = null;
-	//Custom Hash to generate cache name (Optional)
-	$config['nameHash'] = 'md5';
+	//Custom Hash to generate cache key (Optional)
+	$config['keyHash'] = 'md5';
 	//Cache file extension (Optional)
 	$config['ext'] = '.lzp';
 	//Cache Compression - supported: gz and lzf (Optional)
 	$config['compressType'] = 'gz';
 	//Write cache only when call function Sync(Optional)
-	$config['syncOnCall'] = false;
+	$config['sync'] = false;
+	//Call Sync on Destruct(Optional)
+	$config['syncOnDestruct'] = false;
 //Apply Settings:
 	$cache->ApplySettings($config);
 ```

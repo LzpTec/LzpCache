@@ -6,12 +6,12 @@
  * @copyright 2018 Lzp Tec
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Lzp;
+namespace LzpCache;
 
 /**
  * Base LzpCacheClass
  */
-abstract class Cache
+abstract class LzpCache
 {
     /**
      * const string
@@ -32,8 +32,16 @@ abstract class Cache
         'version' => null,
         'nameHash' => 'md5',
         'compressType' => 'gz',
-        'syncOnCall' => false,
+        'sync' => false,
+		'syncOnDestruct' => false
     );
+
+    public function __destruct()
+    {
+		if($this->cfg['sync'] && $this->cfg['syncOnDestruct']) {
+			$this->Sync();
+		}
+    }
 
     /**
      * Get Settings

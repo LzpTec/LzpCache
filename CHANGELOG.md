@@ -8,15 +8,21 @@
 
 ## [2018.2]
 
-### Coming Soon
-
--Support for MemCache and MemCached.
-
 ### Changed
 
--Moved function Create to LzpCache Core
+-Renamed setting syncOnCall to sync
 
--Moved function Get to LzpCache Core
+-Renamed setting nameHash to keyHash
+
+-Added syncOnDestruct to the Settings
+
+-Namespace changed from Lzp to LzpCache
+
+-Moved function Create to LzpCache(Core)
+
+-Moved function Get to LzpCache(Core)
+
+-Moved function Exists to LzpCache(Core)
 
 -Added parameter $round in function Size
 
@@ -37,6 +43,10 @@
 -Function Config(Use ApplySettings instead)
 
 -Function GetVersion
+
+### Delayed
+
+-Support for MemCache and MemCached.
 
 ## [2018.1]
 

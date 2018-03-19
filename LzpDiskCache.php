@@ -1,14 +1,14 @@
 <?php
 /**
- * LzpDiskCache v2018.2 - Requires PHP >= 5.5
+ * DiskCache v2018.2 - Requires PHP >= 5.5
  *
  * @author André Posso <admin@lzptec.com>
  * @copyright 2018 Lzp Tec
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Lzp;
+namespace LzpCache;
 
-class DiskCache extends Cache
+class DiskCache extends LzpCache
 {
     private $diskCfg = array(
         'dir' => (__DIR__) . self::DS . 'cache' . self::DS,
@@ -78,7 +78,7 @@ class DiskCache extends Cache
 
         $data = $this->Encode($cacheData);
 
-        if ($settings['syncOnCall']) {
+        if ($settings['sync']) {
             $this->sync[$file] = $data;
             return true;
         }
@@ -104,7 +104,7 @@ class DiskCache extends Cache
         $cache = $path . implode(self::DS, $this->Name($name));
         $cache .= $settings['ext'];
 
-        if ($settings['syncOnCall'] && array_key_exists($cache, $this->sync)) {
+        if ($settings['sync'] && array_key_exists($cache, $this->sync)) {
             $cache = $this->sync[$cache];
         } else {
             if (!is_file($cache)) {
@@ -150,7 +150,7 @@ class DiskCache extends Cache
 
             $del[$name] = is_file($file) ? @unlink($file) : null;
 
-            if ($settings['syncOnCall']) {
+            if ($settings['sync']) {
                 if (array_key_exists($file, $this->sync)) {
                     unset($this->sync[$file]);
                     $del[$name] = true;

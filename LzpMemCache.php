@@ -1,14 +1,14 @@
 <?php
 /**
- * LzpDiskCache v2018.2 - Requires PHP >= 5.5
+ * MemCache v2018.2 - Requires PHP >= 5.5
  *
  * @author André Posso <admin@lzptec.com>
  * @copyright 2018 Lzp Tec
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Lzp;
+namespace LzpCache;
 
-class MemCache extends Cache
+class MemCache extends LzpCache
 {
     private $memCfg = array(
         'host' => '127.0.0.1',
