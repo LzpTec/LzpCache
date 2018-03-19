@@ -5,7 +5,7 @@
 2018.1 - 02/01/2018
 
 ## Current dev version
-2018.2 - 2018
+2018.2 - RC1
 
 **LzpCache 2018.1** Caches from previous versions does not work with the new version
 

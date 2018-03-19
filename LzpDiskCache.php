@@ -1,6 +1,6 @@
 <?php
 /**
- * DiskCache v2018.2 - Requires PHP >= 5.5
+ * DiskCache v2018.2 RC1 - Requires PHP >= 5.5
  *
  * @author André Posso <admin@lzptec.com>
  * @copyright 2018 Lzp Tec

@@ -1,6 +1,6 @@
 <?php
 /**
- * LzpCache v2018.2 - Requires PHP >= 5.5
+ * LzpCache v2018.2 RC1 - Requires PHP >= 5.5
  *
  * @author André Posso <admin@lzptec.com>
  * @copyright 2018 Lzp Tec
@@ -11,7 +11,7 @@ namespace LzpCache;
 /**
  * Base LzpCacheClass
  */
-abstract class LzpCache
+ abstract class LzpCache
 {
     /**
      * const string
@@ -219,8 +219,6 @@ abstract class LzpCache
      */
     protected function Name($name)
     {
-        $name = $this->Filter($name);
-
         $nameHash = hash($this->cfg['nameHash'], $name, true);
 
         $nameHash = $this->Base32($nameHash . $name);

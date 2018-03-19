@@ -4,19 +4,21 @@
 2018.1 - 02/01/2018
 
 ## Current dev version
-2018.2 - 2018
+2018.2 - RC1
 
 ## [2018.2]
 
 ### Changed
+
+-Improved Key Hash
+
+-Namespace changed from Lzp to LzpCache
 
 -Renamed setting syncOnCall to sync
 
 -Renamed setting nameHash to keyHash
 
 -Added syncOnDestruct to the Settings
-
--Namespace changed from Lzp to LzpCache
 
 -Moved function Create to LzpCache(Core)
 
