@@ -4,9 +4,16 @@
 2018.1 - 02/01/2018
 
 ## Current dev version
-2018.2 - RC1
+2019.1 - BETA
 
-## [2018.2]
+## [2019.1]
+
+### Added
+
+-Added syncOnDestruct to the Settings
+
+-Added parameter $round in function Size
+
 
 ### Changed
 
@@ -18,19 +25,17 @@
 
 -Renamed setting nameHash to keyHash
 
--Added syncOnDestruct to the Settings
-
 -Moved function Create to LzpCache(Core)
 
 -Moved function Get to LzpCache(Core)
 
 -Moved function Exists to LzpCache(Core)
 
--Added parameter $round in function Size
-
--New ChangeLog - based on: http://keepachangelog.com/en/1.0.0/
+-Improved ChangeLog - based on: http://keepachangelog.com/en/1.0.0/
 
 ### Fixed
+
+-Name now use custom settings
 
 -Function Size(Not working)
 

@@ -1,17 +1,19 @@
 <?php
+
 /**
- * LzpCache v2018.2 RC1 - Requires PHP >= 5.5
+ * LzpCache v2019.1 BETA - Requires PHP >= 5.5
  *
  * @author André Posso <admin@lzptec.com>
- * @copyright 2018 Lzp Tec
+ * @copyright 2019 Lzp Tec
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace LzpCache;
 
 /**
  * Base LzpCacheClass
  */
- abstract class LzpCache
+abstract class LzpCache
 {
     /**
      * const string
@@ -30,17 +32,18 @@ namespace LzpCache;
         'expire' => 600,
         'compress' => 0,
         'version' => null,
-        'nameHash' => 'md5',
+        'keyHash' => 'md5',
         'compressType' => 'gz',
         'sync' => false,
-		'syncOnDestruct' => false
+        'syncOnDestruct' => false
+
     );
 
     public function __destruct()
     {
-		if($this->cfg['sync'] && $this->cfg['syncOnDestruct']) {
-			$this->Sync();
-		}
+        if ($this->cfg['sync'] && $this->cfg['syncOnDestruct']) {
+            $this->Sync();
+        }
     }
 
     /**
@@ -217,9 +220,9 @@ namespace LzpCache;
      * @param string $name Cache name
      * @return array
      */
-    protected function Name($name)
+    protected function Name($name, $settings)
     {
-        $nameHash = hash($this->cfg['nameHash'], $name, true);
+        $nameHash = hash($settings['keyHash'], $name, true);
 
         $nameHash = $this->Base32($nameHash . $name);
 

@@ -1,11 +1,13 @@
 <?php
+
 /**
- * DiskCache v2018.2 RC1 - Requires PHP >= 5.5
+ * DiskCache v2019.1 BETA - Requires PHP >= 5.5
  *
  * @author André Posso <admin@lzptec.com>
- * @copyright 2018 Lzp Tec
+ * @copyright 2019 Lzp Tec
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace LzpCache;
 
 class DiskCache extends LzpCache
@@ -52,7 +54,7 @@ class DiskCache extends LzpCache
     protected function CacheExists($name, $settings)
     {
         $path = $this->GetDirectoryWithVersion($settings);
-        $name = implode(self::DS, $this->Name($name));
+        $name = implode(self::DS, $this->Name($name, $settings));
 
         return is_file($path . $name . $settings['ext']);
     }
@@ -69,7 +71,7 @@ class DiskCache extends LzpCache
     {
         $path = $this->GetDirectoryWithVersion($settings);
 
-        $file = $path . implode(self::DS, $this->Name($name)) . $settings['ext'];
+        $file = $path . implode(self::DS, $this->Name($name, $settings)) . $settings['ext'];
 
         $cacheData = array(
             'settings' => $settings,
@@ -101,7 +103,7 @@ class DiskCache extends LzpCache
         $path = $this->GetDirectoryWithVersion($settings);
 
         $settings = $this->CustomSettings($settings);
-        $cache = $path . implode(self::DS, $this->Name($name));
+        $cache = $path . implode(self::DS, $this->Name($name, $settings));
         $cache .= $settings['ext'];
 
         if ($settings['sync'] && array_key_exists($cache, $this->sync)) {
@@ -145,7 +147,7 @@ class DiskCache extends LzpCache
 
         $del = array();
         foreach ($names as $name) {
-            $newName = implode(self::DS, $this->Name($names));
+            $newName = implode(self::DS, $this->Name($names, $settings));
             $file = $path . $newName . $settings['ext'];
 
             $del[$name] = is_file($file) ? @unlink($file) : null;
@@ -254,9 +256,8 @@ class DiskCache extends LzpCache
      */
     protected function ValidateDirectory($path)
     {
-		if(!is_dir($path))
-		{
-			mkdir($path, 0777, true);
-		}
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
     }
 }

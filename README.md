@@ -5,7 +5,7 @@
 2018.1 - 02/01/2018
 
 ## Current dev version
-2018.2 - RC1
+2019.1 - BETA
 
 **LzpCache 2018.1** Caches from previous versions does not work with the new version
 
@@ -35,14 +35,14 @@ To get current settings:
 ```php
 	$cache->GetSettings();
 //Returns
-	array('dir', 'expire', 'compress', 'version', 'keyHash', 'ext', 'compressType', 'sync', 'syncOnDestruct');
+	array('dir', 'expire', 'compress', 'version', 'keyHash', 'ext', 'compressType', 'sync', 'syncOnDestruct', 'namePrefix');
 ```
 
 
 To configure:
 ```php
 //Settings values
-	$config = array('dir', 'expire', 'compress', 'version', 'keyHash', 'ext', 'compressType', 'sync', 'syncOnDestruct');
+	$config = array('dir', 'expire', 'compress', 'version', 'keyHash', 'ext', 'compressType', 'sync', 'syncOnDestruct', 'namePrefix');
 //Parameters( = default/demonstration):
 	//Directory path where the cache will be stored
 	$config['dir'] = __DIR__.'/cache/';
@@ -62,6 +62,8 @@ To configure:
 	$config['sync'] = false;
 	//Call Sync on Destruct(Optional)
 	$config['syncOnDestruct'] = false;
+	//Name Prefix(Optional)
+	$config['namePrefix'] = null;
 //Apply Settings:
 	$cache->ApplySettings($config);
 ```

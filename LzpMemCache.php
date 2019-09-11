@@ -1,11 +1,13 @@
 <?php
+
 /**
- * MemCache v2018.2 RC1 - Requires PHP >= 5.5
+ * MemCache v2019.1 BETA - Requires PHP >= 5.5
  *
  * @author André Posso <admin@lzptec.com>
- * @copyright 2018 Lzp Tec
+ * @copyright 2019 Lzp Tec
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace LzpCache;
 
 class MemCache extends LzpCache
@@ -29,9 +31,7 @@ class MemCache extends LzpCache
      * @return array containing the merged settings
      */
     protected function CustomSettings($customConfiguration)
-    {
-
-    }
+    { }
 
     /**
      * Checks if a cache exist
@@ -41,7 +41,7 @@ class MemCache extends LzpCache
      * @return bool
      */
     protected function CacheExists($name, $settings)
-    {}
+    { }
 
     /**
      * Create one or more caches
@@ -51,8 +51,8 @@ class MemCache extends LzpCache
      * @param array $settings Optional containing settings for the cache.
      * @return array
      */
-    public function CacheWrite($name, $data, $settings)
-    {}
+    protected function CacheWrite($name, $data, $settings)
+    { }
 
     /**
      * Get one or more caches
@@ -62,8 +62,8 @@ class MemCache extends LzpCache
      * @param array $settings Optional containing settings for the cache.
      * @return mixed
      */
-    public function GetCacheRead($name, $ignoreExpired, $settings)
-    {}
+    protected function CacheRead($name, $ignoreExpired, $settings)
+    { }
 
     /**
      * Delete one or more caches
@@ -73,7 +73,7 @@ class MemCache extends LzpCache
      * @return mixed
      */
     public function Delete($names, $settings = null)
-    {}
+    { }
 
     /**
      * Delete all caches
@@ -82,7 +82,7 @@ class MemCache extends LzpCache
      * @return mixed
      */
     public function Clear($settings = null)
-    {}
+    { }
 
     /**
      * Reads and returns the cache directory size
@@ -92,12 +92,11 @@ class MemCache extends LzpCache
      * @return null|string
      */
     public function Size($round = false, $settings = null)
-    {}
+    { }
 
     /**
      * Sync all cache
      */
     public function Sync()
-    {}
-
+    { }
 }
